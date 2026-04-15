@@ -57,3 +57,46 @@ HouseNode* findHouse(HouseNode *head, char *street, int number){
     }
     return NULL; //Si no existeix, retornem el null
 }
+
+// Cerca un carrer amb una abreviatura
+void cerca_inteligent(HouseNode *head, char *street, int number){
+    char street_net[100];
+    //Abreviatures de Carrer i Avinguda
+    if(strncasecmp(street, "C. ", 3) == 0){ // el 3 es la lletra. el punt i l'espai
+        sprintf(street_net, "Carrer %s", street +3);
+    }
+    else if(strncasecmp(street, "Av. ", 4) == 0){
+        sprintf(street_net, "Avinguda %s", street + 4); // el mateix el 4.
+    }
+    else{
+        strcpy(street_net, street);
+    }
+    
+     // Aqui l'huaria de tribar sino té cap abreviatura (Ja tenim funcio creada en el main)     
+    HouseNode *resultat = findHouse(head, street_net, number);
+
+    if (resultat != NULL){
+        printf("Trobat (%f, %f)\n", resultat->house.lat, resultat-> house.lon);
+        return;
+    }
+    printf("No s'ha trobat la casa",street_net);
+    
+    // Seguiment dels numeros 
+    HouseNode *temp = head;
+    int street_trobat = 0;
+    while(temp != NULL){
+        if(strcasecmp(temp->house.street, street_net) == 0){ // utilitzem strcasacmp (funcio ja feta) per comparar sense importar les majuscules.
+            printf("Nùmero vàlid disponible: %d\n", temp->house.number);
+            street_trobat = 1;
+        }
+        temp = temp->next; // seguent node
+    }
+    if (street_trobat ==1){
+        printf("Aquest són tots els números disponibles al carrer %s.\n",street_net);
+    }
+    
+        else {
+            printf("Carrer '%s' NO trobat.\n", street_net);
+        }
+}
+
