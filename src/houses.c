@@ -58,6 +58,7 @@ HouseNode* findHouse(HouseNode *head, char *street, int number){
     return NULL; //Si no existeix, retornem el null
 }
 
+
 // Cerca un carrer amb una abreviatura
 void cerca_inteligent(HouseNode *head, char *street, int number){
     char street_net[100];
@@ -71,7 +72,7 @@ void cerca_inteligent(HouseNode *head, char *street, int number){
     else{
         strcpy(street_net, street);
     }
-    
+
      // Aqui l'huaria de tribar sino té cap abreviatura (Ja tenim funcio creada en el main)     
     HouseNode *resultat = findHouse(head, street_net, number);
 
@@ -98,5 +99,27 @@ void cerca_inteligent(HouseNode *head, char *street, int number){
         else {
             printf("Carrer '%s' NO trobat.\n", street_net);
         }
+    
+    //Seguminet de Levenshtein- 
+    HouseNode *temp_lev = head;
+    char millor_suggeriment[100] = "";
+    int dist_minima = 100;
+    while (temp != NULL){
+        int d = calcular_ditancia(street_net, temp_lev->house.street); // Calcular la distancia
+        if (d < dist_minima){
+            dist_minima = d;
+            strcpy(millor_suggeriment, temp_lev-> house.street);
+        }
+        temp_lev = temp_lev->next;
+    }
+
+    if(dist_minima < 4){ // Si la distància és petit seguim amb el nom.
+        printf("No hem trobat '%s'. Volies dir '%s'?.\n",street_net, millor_suggeriment);
+    
+    }
+    else{
+        printf("No s'ha trobat cap carrer similar. \n");
+    }
+
 }
 

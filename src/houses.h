@@ -16,5 +16,5 @@ typedef struct HouseNode {
 HouseNode* addHouse(HouseNode *head, House house);
 HouseNode* loadHouses(char *filename);
 HouseNode* findHouse(HouseNode *head, char *street, int number);
-
+HouseNode* cerca_inteligent(HouseNode *head, char *street, int number); 
 #endif

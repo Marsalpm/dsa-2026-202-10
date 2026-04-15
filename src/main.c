@@ -7,6 +7,8 @@
 #include <stdbool.h>
 #include "house_list.h"
 #include "houses.h"
+#include <strings.h>
+#include <ctype.h>
 
 void createaleak() {
   char *foo = malloc(20 * sizeof(char));
