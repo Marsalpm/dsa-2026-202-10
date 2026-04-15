@@ -3,6 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+void minuscules(char *str) {
+    for (int i = 0; str[i]; i++) {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+            str[i] += 32;
+        }
+    }
+}
+
 void assertEquals(const char *found, const char *expected) {
   if (strcmp(expected, found) != 0) {
     fprintf(stderr, "\033[0;31m    Expected '%s' but found '%s'\033[0m\n\n",

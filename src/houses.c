@@ -28,7 +28,7 @@ HouseNode* loadHouses(char *filename){
     while(fgets(line, sizeof(line), file)){ //LLegim fitxer linia a linia
         House house;    //Creem una casa
         
-        sscanf(line, "%[^;];%d;%lf%lf", house.street, &house.number, &house.lat, &house.lon);   //Guardem les dades d'un string per parts, cada cop que arriba a ; es guarda a una variable diferent
+        sscanf(line, "%[^;];%d;%lf;%lf", house.street, &house.number, &house.lat, &house.lon);   //Guardem les dades d'un string per parts, cada cop que arriba a ; es guarda a una variable diferent
         head = addHouse(head, house);   //Afegim la casa a la linkedlist
     }
 
@@ -40,10 +40,18 @@ HouseNode* loadHouses(char *filename){
 
 HouseNode* findHouse(HouseNode *head, char *street, int number){
     HouseNode *current = head;   //Comencem pel principi
-
+    //convertim el carrer rebut en miúscules
+    char inputstreet[100];
+    strcpy(inputstreet, street);
+    minuscules(inputstreet);
     while (current != NULL){    //Recorrem la llista mentres hi hagin nodes
-        if(strcmp(current->house.street, street) == 0 && current->house.number == number){ //Comparem els carrers i numeros
-            return current; //Si coincideix, hem trobat la casa
+        // convertim el carrer a comparar amb el input en minúcules
+        char currentStreet[100];
+        strcpy(currentStreet, current->house.street);
+        minuscules(currentStreet);
+        if (strcmp(currentStreet, inputstreet) == 0 &&
+            current->house.number == number) {
+            return current;
         }
         current = current->next; //Si no la trobem, seguim recorrent
     }

@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <stdbool.h>
+#include "house_list.h"
+#include "houses.h"
 
 void createaleak() {
   char *foo = malloc(20 * sizeof(char));
@@ -11,6 +14,7 @@ void createaleak() {
 }
 
 int main() {
+ 
   printf("*****************\nWelcome to DSA!\n*****************\n");
 
   // how to import and call a function
@@ -20,7 +24,7 @@ int main() {
   // createaleak();
 
 
-
+  // Demanar quin mapa vol utilitzar
   char mapname[20];
 
   printf("Introdueix el nom del mapa (ex: xs_1, xs_2, md_1, lg_1, xl_1 or xl_1): ");
@@ -30,6 +34,39 @@ int main() {
   strcpy(filename, "maps/"); //Construim un string "maps/"
   strcat(filename, mapname); //"maps/mapname"
   strcat(filename, "/houses.txt"); //Adreca final: "maps/mapname/houses.txt"
+  HouseNode *houses = loadHouses(filename);
+  
+  // Demanar com vol introducir la posició
+  char mode[20];
 
-  return 0;
+  while (true)
+  {
+    printf("Com vols introduir la posició? (address / coordinate / place): ");
+    scanf("%s", mode);
+
+    if (strcmp(mode, "address") == 0) {
+      break; // sortim del bucle i continuem el programa
+      }
+
+    if (strcmp(mode, "coordinate") == 0 || strcmp(mode, "place") == 0) {
+      printf("Not implemented yet\n");
+      }
+    printf("Opció invalida\n");
+  }
+  
+  //Demanar carrer i número
+  char carrer[100];
+  int numero;
+  printf("Introdueix el nom del carrer: ");
+  scanf("%[^\n]", carrer);
+  printf("Introdueix el número del carrer: ");
+  scanf("%d", &numero);
+
+  HouseNode *resultat = findHouse(houses, carrer, numero);
+  if(resultat==NULL){
+    printf("No s'ha trobat la casa");
+  } else {
+    printf("Trobat a (%f, %f)\n", resultat->house.lat, resultat->house.lon);
+  }
+return 0;
 }
