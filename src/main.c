@@ -1,11 +1,11 @@
 #include "sample_lib.h"
+#include "utils.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <stdbool.h>
-#include "house_list.h"
 #include "houses.h"
 #include <strings.h>
 #include <ctype.h>
@@ -60,7 +60,7 @@ int main() {
   char carrer[100];
   int numero;
   printf("Introdueix el nom del carrer: ");
-  scanf("%[^\n]", carrer);
+  scanf(" %[^\n]", carrer);
   printf("Introdueix el número del carrer: ");
   scanf("%d", &numero);
 
