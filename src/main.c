@@ -9,6 +9,7 @@
 #include "houses.h"
 #include <strings.h>
 #include <ctype.h>
+#include "place.h"
 
 void createaleak() {
   char *foo = malloc(20 * sizeof(char));
@@ -36,7 +37,6 @@ int main() {
   strcpy(filename, "maps/"); //Construim un string "maps/"
   strcat(filename, mapname); //"maps/mapname"
   strcat(filename, "/houses.txt"); //Adreca final: "maps/mapname/houses.txt"
-  HouseNode *houses = loadHouses(filename);
   
   // Demanar com vol introducir la posició
   char mode[20];
@@ -47,28 +47,36 @@ int main() {
     scanf("%s", mode);
 
     if (strcmp(mode, "address") == 0) {
-      break; // sortim del bucle i continuem el programa
+      HouseNode *houses = loadHouses(filename);
+      //Demanar carrer i número
+      char carrer[100];
+      int numero;
+      printf("Introdueix el nom del carrer: ");
+      scanf(" %[^\n]", carrer);
+      printf("Introdueix el número del carrer: ");
+      scanf("%d", &numero);
+
+      cerca_inteligent(houses, carrer, numero);
+      break; // sortim del bucle 
       }
 
-    if (strcmp(mode, "coordinate") == 0 || strcmp(mode, "place") == 0) {
+    if(strcmp(mode, "place") == 0){
+      PlaceNode *places = loadPlaces(filename);
+      // Demanar lloc
+      char place[100];
+      printf("Intodueix el nom del lloc (ex: Universitat Pompeu Fabra–Campus del Poblenou or L'Illa Diagonal): ");
+      scanf(" %[^\n]", place);
+      // sortim del bucle 
+      break;
+    }
+
+    if (strcmp(mode, "coordinate") == 0) {
       printf("Not implemented yet\n");
       }
     printf("Opció invalida\n");
   }
   
-  //Demanar carrer i número
-  char carrer[100];
-  int numero;
-  printf("Introdueix el nom del carrer: ");
-  scanf(" %[^\n]", carrer);
-  printf("Introdueix el número del carrer: ");
-  scanf("%d", &numero);
 
-  HouseNode *resultat = findHouse(houses, carrer, numero);
-  if(resultat==NULL){
-    printf("No s'ha trobat la casa");
-  } else {
-    printf("Trobat a (%f, %f)\n", resultat->house.lat, resultat->house.lon);
-  }
+
 return 0;
 }

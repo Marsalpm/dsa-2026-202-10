@@ -71,7 +71,7 @@ void cerca_inteligent(HouseNode *head, char *street, int number) {
     // Si comença per "Av. ", ho expandim a "Avinguda "
     else if (strncasecmp(street, "Av. ", 4) == 0) {
         sprintf(street_net, "Avinguda %s", street + 4); // Saltem els 4 primers caràcters
-    }
+    }   
     else {
         strcpy(street_net, street); // Si no hi ha abreviatura, copiem el nom tal qual
     }
@@ -95,6 +95,22 @@ void cerca_inteligent(HouseNode *head, char *street, int number) {
             street_trobat = 1; // Marquem que el carrer existeix
         }
         temp = temp->next; // Passem al següent node
+    }
+        // Si el carrer existeix però el número és incorrecte deixem triar
+    if (street_trobat == 1) {
+        int nou_numero;
+
+        printf("Introdueix un número vàlid del carrer: ");
+        scanf("%d", &nou_numero);
+
+        HouseNode *res = findHouse(head, street_net, nou_numero);
+
+        if (res != NULL) {
+            printCoordinates(res->house);
+        } else {
+            printf("Número no vàlid.\n");
+        }
+        return; 
     }
 
     // Si el carrer no s'ha trobat en absolut, busquem el carrer més semblant
