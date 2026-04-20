@@ -61,13 +61,20 @@ int main() {
       }
 
     if(strcmp(mode, "place") == 0){
-      PlaceNode *places = loadPlaces(filename);
       // Demanar lloc
-      char place[100];
+      HouseNode *houses = loadHouses(filename); // també carrega places
       printf("Intodueix el nom del lloc (ex: Universitat Pompeu Fabra–Campus del Poblenou or L'Illa Diagonal): ");
       scanf(" %[^\n]", place);
+      char place[100];
+      fgets(street, 100, stdin);
+      street[strcspn(street, "\n")] = 0;
+      
+      cerca_inteligent(houses, place, 0); // funcio de cerca
+      freeHouses(houses); // Alliberem la de cases 
       // sortim del bucle 
       break;
+
+      
     }
 
     if (strcmp(mode, "coordinate") == 0) {
@@ -77,6 +84,9 @@ int main() {
   }
   
 
-
 return 0;
 }
+
+
+// per executar: gcc -o main src/main.c src/houses.c src/place.c src/sample_lib.c test/utils.c -Isrc -Itest -Wall
+// ./main

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "place.h"
+#include <stdlib.h>
+#include <strings.h>
 
 PlaceNode* addPlace(PlaceNode *head, Place p) {
     PlaceNode *newNode = malloc(sizeof(PlaceNode));
