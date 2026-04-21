@@ -29,7 +29,7 @@
         while (fgets(line, sizeof(line), file)) { // Llegim el fitxer línia a línia fins al final
             House house; // Creem una estructura temporal per a la casa
             // Parsegem la línia separada per punts i coma i guardem les dades
-            if (sscanf(line, "%[^;];%d;%lf;%lf", house.street, &house.number, &house.lat, &house.lon) == 4) {
+            if (sscanf(line, " %99[^,] ,%d ,%lf ,%lf", house.street,&house.number,&house.lat,&house.lon) == 4) {
                 head = addHouse(head, house); // Afegim la casa parsejada a la llista
             }
         }
@@ -47,6 +47,7 @@
         minuscules(inputstreet); // El passem a minúscules per ignorar diferències
 
         while (current != NULL) { // Recorrem la llista mentre no arribem al final
+
             // Preparem un string per normalitzar el carrer del node actual
             char currentStreet[100];
             strcpy(currentStreet, current->house.street); // Copiem el carrer de la casa
@@ -85,7 +86,7 @@
             printCoordinates(resultat->house); // Si existeix, imprimim coordenades
             return; // Sortim de la funció
         }
-        printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
+        else printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
         
         // Si no hi és, busquem si almenys el carrer existeix per suggerir números
         HouseNode *temp = head; // Punter temporal per recórrer la llista
@@ -229,6 +230,7 @@
     }
 // LEVENSHTEIN
     int levenshteinDistance(char *a, char *b) {
+        if (!a || !b) return 1000; 
         int m = strlen(a); // Longitud del primer string
         int n = strlen(b); // Longitud del segon string
         int i, j; // Variables per als índexs dels bucles

@@ -3,13 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
+#include <ctype.h>
 
-
-void minuscules(char *str) {
-    for (int i = 0; str[i]; i++) {
-        if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] += 32;
-        }
+void minuscules(char *s) {
+    if (!s) return;
+    for (int i = 0; s[i] != '\0'; i++) {
+        s[i] = tolower((unsigned char)s[i]);
     }
 }
 

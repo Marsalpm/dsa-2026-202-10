@@ -34,9 +34,7 @@ int main() {
   scanf("%19s", mapname);
 
   char filename[100];
-  strcpy(filename, "maps/"); //Construim un string "maps/"
-  strcat(filename, mapname); //"maps/mapname"
-  strcat(filename, "/houses.txt"); //Adreca final: "maps/mapname/houses.txt"
+  snprintf(filename, sizeof(filename),"maps/%s/houses.txt", mapname);
   
   // Demanar com vol introducir la posició
   char mode[20];
@@ -44,25 +42,31 @@ int main() {
   while (true)
   {
     printf("Com vols introduir la posició? (address / coordinate / place): ");
-    scanf("%s", mode);
+    scanf("%19s", mode);
 
     if (strcmp(mode, "address") == 0) {
-      HouseNode *houses = loadHouses(filename);
+       HouseNode *houses = loadHouses(filename);
+      if (houses == NULL) {
+        printf("Error carregant cases\n");
+        continue;}
       //Demanar carrer i número
       char carrer[100];
       int numero;
       printf("Introdueix el nom del carrer: ");
       scanf(" %[^\n]", carrer);
       printf("Introdueix el número del carrer: ");
-      scanf("%d", &numero);
+      scanf("%d", &numero); 
       cerca_inteligent_houses(houses, carrer, numero);
-      free(houses);
+      freeHouses(houses);
       break; // sortim del bucle 
       }
 
     else if(strcmp(mode, "place") == 0){
       // Demanar lloc
       PlaceNode *places = loadPlaces(filename); // també carrega places
+      if (places == NULL) {
+          printf("Error carregant llocs\n");
+          continue;}
       char place[100];
       printf("Intodueix el nom del lloc (ex: Universitat Pompeu Fabra–Campus del Poblenou o L'Illa Diagonal): ");
       scanf(" %[^\n]", place); 
@@ -70,17 +74,13 @@ int main() {
       freePlaces(places); // Alliberem memòria 
       // sortim del bucle 
       break;
-
-      
     }
 
     else if (strcmp(mode, "coordinate") == 0) {
       printf("Not implemented yet\n");
       }
-    printf("Opció invalida\n");
+    else printf("Opció invalida\n");
   }
-  
-
 return 0;
 }
 
