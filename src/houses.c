@@ -1,6 +1,7 @@
     #include "houses.h"
     #include "utils.h"
     #include <stdio.h>
+    #include <stdbool.h>
     #include <stdlib.h>
     #include <string.h>
     #include <strings.h> // Incloem per poder usar strcasecmp i strncasecmp
@@ -62,7 +63,8 @@
 
     // Cerca un carrer gestionant abreviatures, números erronis i similituds
 //FUNCIO DE CERCA INTELIGENT LAB 2 I LAB 3:
-    void cerca_inteligent(HouseNode *head, char *street, int number) {
+    void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
+        char final[100]="";
         char street_net[100]; // Variable per guardar el nom del carrer "netejat"
         
         // Si comença per "C. ", ho expandim a "Carrer "
@@ -100,7 +102,8 @@
             // Si el carrer existeix però el número és incorrecte deixem triar (LAB3)
         if (street_trobat == 1) {
             int nou_numero;
-
+            while(true)
+            {
             printf("Introdueix un número vàlid del carrer: ");
             scanf("%d", &nou_numero);
 
@@ -108,13 +111,13 @@
 
             if (res != NULL) {
                 printCoordinates(res->house);
+                return; 
             } else {
                 printf("Número no vàlid.\n");
             }
-            return; 
+            }
         }
 
-//Suggerinet de lab3: Escollir amb els noms més similars.
         printf("'%s'No s'ha trobat. Volies dir:\n" , street_net);
 
         char sug1[100] = "", sug2[100] = "", sug3[100] = ""; // Creem les tres variables que seran els 3 candidats
@@ -123,10 +126,15 @@
         HouseNode *temp_lev = head;
         while (temp_lev != NULL){ // recorre tota la llista
             int d = levenshteinDistance(street_net, temp_lev->house.street); // Calculem la distanci amb l'algoritme de Levenshtein
-            
+            // Evita que es dupliquin.
+            if (strcmp(temp_lev->house.street, sug1) == 0 ||
+            strcmp(temp_lev->house.street, sug2) == 0 ||
+            strcmp(temp_lev->house.street, sug3) == 0) {
+            temp_lev = temp_lev->next;
+            continue;}
 
             //Guardar les 3 millors opcions comparant amb el que ha posat el usuari.
-            if (d < 10 && strcmp(sug1, temp_lev->house.street) != 0 && strcmp(sug2, temp_lev->house.street) != 0){ //limit de 5 erros del que ha posat l'usuari i el original. Mirem si entra en el nostre top3. Evita que es dupliquin.
+            if (d < 5){ //limit de 5 erros del que ha posat l'usuari i el original. Mirem si entra en el nostre top3. 
                 // Lògica del desplaçament: SI un carrer entra al podi hem de treure els que ja hi eren.
                 if (d < dist1){  // Cas1: converteix el numero 1.
                     dist3 = dist2; strcpy(sug3, sug2); // el que estava 2n passa a 3r
@@ -145,46 +153,69 @@
             }
             temp_lev = temp_lev->next;
         }
-        //FEr print dels 3 millors opcions que s'asembla més al que ha dir l'usuari.
+        int opcions=0;
+        //Fer print dels 3 millors opcions que s'asembla més al que ha dir l'usuari.
         if(dist1 < 100){
             printf(" 1. %s\n", sug1);
+            opcions++;
             if (dist2 < 100){
                 printf("2. %s\n", sug2);
+                opcions++;
             }
             if (dist3 < 100){
                 printf("3. %s\n", sug3);
+                opcions++;
             }
         }
-        else{
+        else{   
             printf("No s'ha trobat res similar.\n");
         }
+        if(opcions >0){
+        while(true){
+        int opcio;
+        printf("Escull una opció (1-%d): ", opcions);
+        scanf("%d", &opcio);
 
+        
 
-        // Si el carrer no s'ha trobat en absolut, busquem el carrer més semblant
-        if (street_trobat == 0) {
-            printf("Carrer '%s' NO trobat al sistema.\n", street_net);
-            
-            HouseNode *temp_lev = head; // Punter per recórrer per Levenshtein
-            char millor_suggeriment[100] = ""; // Per guardar el nom més semblant trobat
-            int dist_minima = 100; // Inicialitzem amb un valor de distància alt
-            
-            while (temp_lev != NULL) {
-                // Calculem la distància entre el que ha escrit l'usuari i el carrer del node
-                int d = levenshteinDistance(street_net, temp_lev->house.street); 
-                if (d < dist_minima) { // Si trobem una distància mes petita
-                    dist_minima = d; // Actualitzem la distància mínima
-                    strcpy(millor_suggeriment, temp_lev->house.street); // Guardem el nom
-                }
-                temp_lev = temp_lev->next; // Seguim amb el següent node
-            }
-
-            // Si la similitud és bien (distància < 5), fem suggeriment
-            if (dist_minima < 5) { 
-                printf("No hem trobat '%s'. Volies dir '%s'?\n", street_net, millor_suggeriment);
-            } else {
-                printf("No s'ha trobat cap carrer similar.\n");
-            }
+        if (opcio == 1){ 
+            strcpy(final, sug1);
+            break;
         }
+        else if (opcio == 2 && opcions >= 2){
+            strcpy(final, sug2);
+            break;
+        }
+        else if (opcio == 3 && opcions >= 3){ 
+            strcpy(final, sug3);
+            break;
+        }
+        else {
+            printf("Opció no vàlida.\n");
+        }
+        }
+        printf("Números vàlids disponibles al carrer %s:\n", final);
+        HouseNode *temp2 = head;
+        while (temp2 != NULL) {
+            // Comparem noms de carrer ignorant majúscules
+            if (strcasecmp(temp2->house.street, final) == 0) { 
+                printf("- %d\n", temp2->house.number); // Imprimim cada número que anem trobant
+            }
+            temp2 = temp2->next; // Passem al següent node
+        }
+        int finalnum;
+        while(true){
+        printf("Escull el número: ");
+        scanf("%d", &finalnum);
+        HouseNode *res = findHouse(head, final, finalnum);
+        if (res != NULL) {
+            printCoordinates(res->house);
+            return;
+        } else {
+        printf("Número no vàlid.\n");
+        }
+    }
+    }
     }
 //Fucnions auxilars:
     void printCoordinates(House house) {

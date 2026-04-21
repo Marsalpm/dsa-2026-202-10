@@ -1,6 +1,5 @@
 #ifndef PLACE_H
 #define PLACE_H
-#include "houses.h"
 
 typedef struct Place {
     char name[100];
@@ -16,6 +15,7 @@ typedef struct PlaceNode {
 PlaceNode* addPlace(PlaceNode *head, Place p);
 PlaceNode* loadPlaces(char *filename);
 PlaceNode* findPlace(PlaceNode *head, char *name);
-
+void cerca_inteligent_places(PlaceNode *head, char *name);
+void freePlaces(PlaceNode *head);
 #endif
 
