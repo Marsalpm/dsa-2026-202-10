@@ -1,5 +1,5 @@
 #include "sample_lib.h"
-#include "utils.h"
+#include "../test/utils.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include "place.h"
 
+
 void createaleak() {
   char *foo = malloc(20 * sizeof(char));
   printf("Allocated leaking string: %s", foo);
@@ -19,56 +20,73 @@ void createaleak() {
 int main() {
  
   printf("*****************\nWelcome to DSA!\n*****************\n");
-
-  // how to import and call a function
-  printf("Factorial of 4 is %d\n", fact(4));
-
-  // uncomment and run "make v" to see how valgrind detects memory leaks
-  // createaleak();
-
-
   // Demanar quin mapa vol utilitzar
   char mapname[20];
 
   printf("Introdueix el nom del mapa (ex: xs_1, xs_2, md_1, lg_1, xl_1 or xl_1): ");
   scanf("%19s", mapname);
 
-  char filename[100];
-  snprintf(filename, sizeof(filename),"maps/%s/houses.txt", mapname);
+  
   
   // Demanar com vol introducir la posició
-  char mode[20];
+  int mode;
 
   while (true)
   {
-    printf("Com vols introduir la posició? (address / coordinate / place): ");
-    scanf("%19s", mode);
+    printf("Com vols introduir la posició? ((1)address / (2)coordinate / (3)place): ");
+    int valid_number=scanf("%d", &mode);
+    while(valid_number!=1 && mode<1 && mode>3 ){
+      //vaciar el buffer
+      while(getchar()!='\n');
+      printf("Si us plau introdueixi un nombre vàlid: ");
+      valid_number=scanf("%d", &mode);
+    }
 
-    if (strcmp(mode, "address") == 0) {
-       HouseNode *houses = loadHouses(filename);
-      if (houses == NULL) {
+    if (mode == 1) {
+      char filename[100];
+      snprintf(filename, sizeof(filename),"maps/%s/houses.txt", mapname);
+      HouseNode *houses = loadHouses(filename);
+      while(houses == NULL) {
         printf("Error carregant cases\n");
-        continue;}
+        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, lg_1, xl_1 or xl_1): ");
+        scanf("%19s", mapname);
+        snprintf(filename, sizeof(filename),"maps/%s/houses.txt", mapname);
+        houses = loadHouses(filename);}
+      printf("Houses carregat correctament\n");
       //Demanar carrer i número
       char carrer[100];
       int numero;
       printf("Introdueix el nom del carrer: ");
       scanf(" %[^\n]", carrer);
       printf("Introdueix el número del carrer: ");
-      scanf("%d", &numero); 
+      valid_number=scanf("%d", &numero);
+      while(valid_number!=1){
+      //vaciar el buffer
+      while(getchar()!='\n');
+      printf("Si us plau introdueixi un nombre vàlid: ");
+      valid_number=scanf("%d", &numero);
+      }
       cerca_inteligent_houses(houses, carrer, numero);
       freeHouses(houses);
       break; // sortim del bucle 
       }
 
-    else if(strcmp(mode, "place") == 0){
+    else if(mode == 3){
       // Demanar lloc
+      char filename[100];
+      snprintf(filename, sizeof(filename),"maps/%s/places.txt", mapname);
       PlaceNode *places = loadPlaces(filename); // també carrega places
-      if (places == NULL) {
+      while(places == NULL) {
           printf("Error carregant llocs\n");
-          continue;}
+          printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, lg_1, xl_1 or xl_1): ");
+          scanf("%19s", mapname);
+          char filename[100];
+          snprintf(filename, sizeof(filename),"maps/%s/places.txt", mapname);
+          places = loadPlaces(filename);
+          }
+      printf("Places carregat correctament\n");
       char place[100];
-      printf("Intodueix el nom del lloc (ex: Universitat Pompeu Fabra–Campus del Poblenou o L'Illa Diagonal): ");
+      printf("Intodueix el nom del lloc: ");
       scanf(" %[^\n]", place); 
       cerca_inteligent_places(places, place); // funció de cerca
       freePlaces(places); // Alliberem memòria 
@@ -76,14 +94,10 @@ int main() {
       break;
     }
 
-    else if (strcmp(mode, "coordinate") == 0) {
+    else if (mode == 2) {
       printf("Not implemented yet\n");
       }
     else printf("Opció invalida\n");
   }
 return 0;
 }
-
-
-// per executar: gcc -o main src/main.c src/houses.c src/place.c src/sample_lib.c test/utils.c -Isrc -Itest -Wall
-// ./main

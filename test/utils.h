@@ -1,5 +1,6 @@
 #ifndef ASSERTS_H
 #define ASSERTS_H
+#include "../src/houses.h"
 
 void assertEquals(const char *found, const char *expected);
 void assertEqualsInt(int found, int expected);

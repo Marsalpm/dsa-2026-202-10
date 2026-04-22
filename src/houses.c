@@ -1,5 +1,5 @@
     #include "houses.h"
-    #include "utils.h"
+    #include "../test/utils.h"
     #include <stdio.h>
     #include <stdbool.h>
     #include <stdlib.h>
@@ -135,7 +135,7 @@
             continue;}
 
             //Guardar les 3 millors opcions comparant amb el que ha posat el usuari.
-            if (d < 5){ //limit de 5 erros del que ha posat l'usuari i el original. Mirem si entra en el nostre top3. 
+            if (d < 20){ //limit de 5 erros del que ha posat l'usuari i el original. Mirem si entra en el nostre top3. 
                 // Lògica del desplaçament: SI un carrer entra al podi hem de treure els que ja hi eren.
                 if (d < dist1){  // Cas1: converteix el numero 1.
                     dist3 = dist2; strcpy(sug3, sug2); // el que estava 2n passa a 3r
@@ -157,7 +157,7 @@
         int opcions=0;
         //Fer print dels 3 millors opcions que s'asembla més al que ha dir l'usuari.
         if(dist1 < 100){
-            printf(" 1. %s\n", sug1);
+            printf("1. %s\n", sug1);
             opcions++;
             if (dist2 < 100){
                 printf("2. %s\n", sug2);
@@ -171,7 +171,7 @@
         else{   
             printf("No s'ha trobat res similar.\n");
         }
-        if(opcions >0){
+        if(opcions >=1){
         while(true){
         int opcio;
         printf("Escull una opció (1-%d): ", opcions);

@@ -1,7 +1,7 @@
 SRC_FILES := $(filter-out src/main.c, $(wildcard src/*.c))
 
 compile:
-	gcc -Wall -Wextra -Werror src/main.c $(SRC_FILES) -o main.out -lm
+	gcc -Wall -Wextra -Werror src/main.c $(SRC_FILES) test/utils.c -o main.out -lm
 	
 r:
 	make compile

@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include "place.h"
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include "houses.h"
 #include <stdbool.h>
+#include <assert.h>
 
 PlaceNode* addPlace(PlaceNode *head, Place p) {
     PlaceNode *newNode = malloc(sizeof(PlaceNode));
@@ -26,7 +27,7 @@ PlaceNode* loadPlaces(char *filename) {
     while (fgets(line, sizeof(line), file)) { // Llegim el fitxer línia a línia fins al final
         Place p; // Creem una estructura temporal per a la casa
         // Parsegem la línia separada per punts i coma i guardem les dades
-        if (sscanf(line, "%[^,];%lf;%lf", p.name, &p.lat, &p.lon) == 3) {
+        if (sscanf(line, "%*[^,],%[^,],%*[^,],%lf,%lf", p.name, &p.lat, &p.lon) == 3) {
             head = addPlace(head, p);// Afegim el lloc parsejat a la llista
         }
     }
