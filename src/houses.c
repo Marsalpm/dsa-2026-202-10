@@ -52,7 +52,6 @@
             char currentStreet[100];
             strcpy(currentStreet, current->house.street); // Copiem el carrer de la casa
             minuscules(currentStreet); // El passem a minúscules
-            
             // Comparem el nom normalitzat i el número de la casa //  
             if (strcmp(currentStreet, inputstreet) == 0 && current->house.number == number) {
                 return current; // Si coincideixen, hem trobat la casa i la retornem
@@ -95,30 +94,44 @@
             // Comparem noms de carrer ignorant majúscules
             if (strcasecmp(temp->house.street, street_net) == 0) { 
                 if (street_trobat == 0) printf("Números vàlids disponibles al carrer %s:\n", street_net);
-                printf("- %d\n", temp->house.number); // Imprimim cada número que anem trobant
                 street_trobat = 1; // Marquem que el carrer existeix
             }
             temp = temp->next; // Passem al següent node
         }
-            // Si el carrer existeix però el número és incorrecte deixem triar (LAB3)
+            // Si el carrer existeix però el número és incorrecte deixem triar 
         if (street_trobat == 1) {
+            HouseNode *temp1 = head;
+            int count = 0;
+            while (temp1 != NULL) {
+                if (strcasecmp(temp1->house.street, street_net) == 0) { 
+                    printf("| %-4d ", temp1->house.number);
+                    count++;
+
+                    if (count % 5 == 0) printf("|\n");
+                }
+                temp1 = temp1->next;
+            }
+
+            if (count % 5 != 0) printf("|\n");
             int nou_numero;
-            while(true)
-            {
             printf("Introdueix un número vàlid del carrer: ");
-            scanf("%d", &nou_numero);
-
-            HouseNode *res = findHouse(head, street_net, nou_numero);
-
-            if (res != NULL) {
-                printCoordinates(res->house);
-                return; 
-            } else {
-                printf("Número no vàlid.\n");
-            }
-            }
+            int valid_number=scanf("%d", &nou_numero);
+            HouseNode *resultat = findHouse(head, street_net, nou_numero);
+            if (resultat != NULL) {
+                printCoordinates(resultat->house);
+                return;} 
+            while(valid_number!=1 || resultat == NULL  ){
+            //vaciar el buffer
+            while(getchar()!='\n');
+            printf("Si us plau introdueixi un nombre vàlid: ");
+            valid_number=scanf("%d", &nou_numero);
+            resultat = findHouse(head, street_net, nou_numero);
+            if (resultat != NULL) {
+                printCoordinates(resultat->house);
+                return;} 
         }
-
+        }
+    
         printf("'%s'No s'ha trobat. Volies dir:\n" , street_net);
 
         char sug1[100] = "", sug2[100] = "", sug3[100] = ""; // Creem les tres variables que seran els 3 candidats
@@ -137,12 +150,12 @@
             //Guardar les 3 millors opcions comparant amb el que ha posat el usuari.
             if (d < 20){ //limit de 5 erros del que ha posat l'usuari i el original. Mirem si entra en el nostre top3. 
                 // Lògica del desplaçament: SI un carrer entra al podi hem de treure els que ja hi eren.
-                if (d < dist1){  // Cas1: converteix el numero 1.
+                if (d <= dist1){  // Cas1: converteix el numero 1.
                     dist3 = dist2; strcpy(sug3, sug2); // el que estava 2n passa a 3r
                     dist2 = dist1; strcpy(sug2, sug1); // el que estava 1r passa a ser el 2n
                     dist1 = d; strcpy(sug1, temp_lev->house.street); // el nou 1r
                 }
-                else if (d < dist2){ // Cas2: converteix en el nou nùmero el 2
+                else if (d <= dist2){ // Cas2: converteix en el nou nùmero el 2
                     dist3 = dist2; strcpy(sug3, sug2); // el 2n passa ser 3r
                     dist2 = d; strcpy(sug2, temp_lev->house.street); // el nou carrer passa a ser el 2n
                 }
@@ -175,9 +188,14 @@
         while(true){
         int opcio;
         printf("Escull una opció (1-%d): ", opcions);
-        scanf("%d", &opcio);
+        int valid_number=scanf("%d", &opcio);
+        while(valid_number!=1 || 1>opcio || opcio>opcions){
+        //vaciar el buffer
+        while(getchar()!='\n');
+        printf("Si us plau introdueixi un nombre vàlid: ");
+        valid_number=scanf("%d", &opcio);
+        }
 
-        
 
         if (opcio == 1){ 
             strcpy(final, sug1);
@@ -197,25 +215,37 @@
         }
         printf("Números vàlids disponibles al carrer %s:\n", final);
         HouseNode *temp2 = head;
+        int count = 0;
+
         while (temp2 != NULL) {
-            // Comparem noms de carrer ignorant majúscules
             if (strcasecmp(temp2->house.street, final) == 0) { 
-                printf("- %d\n", temp2->house.number); // Imprimim cada número que anem trobant
+                printf("| %-4d ", temp2->house.number);
+                count++;
+
+                if (count % 5 == 0) printf("|\n");
             }
-            temp2 = temp2->next; // Passem al següent node
+            temp2 = temp2->next;
         }
+
+        if (count % 5 != 0) printf("|\n");
         int finalnum;
-        while(true){
+        
         printf("Escull el número: ");
-        scanf("%d", &finalnum);
+        int valid_number=scanf("%d", &finalnum);
         HouseNode *res = findHouse(head, final, finalnum);
+        if (res!= NULL) {
+                printCoordinates(resultat->house);
+                return;} 
+        while(valid_number!=1 || res == NULL  ){
+        //vaciar el buffer
+        while(getchar()!='\n');
+        printf("Si us plau introdueixi un nombre vàlid: ");
+        valid_number=scanf("%d", &finalnum);
+        res = findHouse(head, final, finalnum);
         if (res != NULL) {
             printCoordinates(res->house);
-            return;
-        } else {
-        printf("Número no vàlid.\n");
+            return;} 
         }
-    }
     }
     }
 //Fucnions auxilars:
