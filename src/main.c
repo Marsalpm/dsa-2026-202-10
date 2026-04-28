@@ -97,7 +97,7 @@ int main() {
     else if (mode == 2) {
       printf("Not implemented yet\n");
       }
-    else printf("Opció invalida\n");
+
   }
 return 0;
 }
