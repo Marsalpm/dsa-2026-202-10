@@ -1,19 +1,17 @@
+#include "utils.h"
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "utils.h"
-#include <ctype.h>
-
 
 void minuscules(char *str) {
-    for (int i = 0; str[i]; i++) {
-        if (str[i] >= 'A' && str[i] <= 'Z') {
-            str[i] += 32;
-        }
+  for (int i = 0; str[i]; i++) {
+    if (str[i] >= 'A' && str[i] <= 'Z') {
+      str[i] += 32;
     }
+  }
 }
-
 
 void assertEquals(const char *found, const char *expected) {
   if (strcmp(expected, found) != 0) {
