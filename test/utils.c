@@ -52,3 +52,42 @@ void runningtest(const char *description) {
 void allsuccess() {
   fprintf(stderr, "\033[0;32m--- ALL TESTS PASSED --- \n\033[0m");
 }
+
+// LEVENSHTEIN
+int levenshteinDistance(char *a, char *b) {
+  int m = strlen(a);   // Longitud del primer string
+  int n = strlen(b);   // Longitud del segon string
+  int i, j;            // Variables per als índexs dels bucles
+  int D[m + 1][n + 1]; // Matriu per guardar els càlculs de distància
+
+  // Inicialitzem la primera columna (cost de borrar caràcters)
+  for (i = 0; i <= m; i++) {
+    D[i][0] = i;
+  }
+
+  // Inicialitzem la primera fila (cost d'inserir caràcters)
+  for (j = 0; j <= n; j++) {
+    D[0][j] = j;
+  }
+
+  // Omplim la matriu comparant caràcter a caràcter
+  for (i = 1; i <= m; i++) {
+    for (j = 1; j <= n; j++) {
+      int cost;
+      // Si els caràcters són iguals, el cost de substitució és 0
+      if (a[i - 1] == b[j - 1]) {
+        cost = 0;
+      } else {
+        cost = 1; // Si són diferents, el cost és 1
+      }
+      // Triem el camí més curt entre eliminació, inserció i substitució
+      D[i][j] = min3(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + cost);
+    }
+  }
+  return D[m][n]; // Retornem el valor de l'última cel·la (distància total)
+}
+
+Leve* addSugestion(Leve *head, char *name, int dist);{
+  if (dist > 7) retun head;
+
+}

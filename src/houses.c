@@ -69,7 +69,7 @@ HouseNode *findHouse(HouseNode *head, char *street, int number) {
 // Cerca un carrer gestionant abreviatures, números erronis i similituds
 // FUNCIO DE CERCA INTELIGENT LAB 2 I LAB 3:
 void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
-  char final[100] = "";
+  char final[100];
   char street_net[100]; // Variable per guardar el nom del carrer "netejat"
 
   // Si comença per "C. ", ho expandim a "Carrer "
@@ -96,18 +96,19 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
 
   // Si no hi és, busquem si almenys el carrer existeix per suggerir números
   HouseNode *temp = head; // Punter temporal per recórrer la llista
-  int street_trobat = 0;  // Indicador per saber si hem trobat el carrer
+  bool street_trobat = false;  // Indicador per saber si hem trobat el carrer
   while (temp != NULL) {
     // Comparem noms de carrer ignorant majúscules
     if (strcasecmp(temp->house.street, street_net) == 0) {
       if (street_trobat == 0)
         printf("Números vàlids disponibles al carrer %s:\n", street_net);
-      street_trobat = 1; // Marquem que el carrer existeix
+      street_trobat = true;// Marquem que el carrer existeix
+      break; 
     }
     temp = temp->next; // Passem al següent node
   }
   // Si el carrer existeix però el número és incorrecte deixem triar
-  if (street_trobat == 1) {
+  if (street_trobat) {
     HouseNode *temp1 = head;
     int count = 0;
     while (temp1 != NULL) {
@@ -124,6 +125,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     if (count % 5 != 0)
       printf("|\n");
     int nou_numero;
+    printf("-Exit (0)\n");
     printf("Introdueix un número vàlid del carrer: ");
     int valid_number = scanf("%d", &nou_numero);
     HouseNode *resultat = findHouse(head, street_net, nou_numero);
@@ -131,13 +133,14 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
       printCoordinates(resultat->house);
       return;
     }
+    if (nou_numero==0)return;
     while (valid_number != 1 || resultat == NULL) {
       // vaciar el buffer
-      while (getchar() != '\n')
-        ;
+      while (getchar() != '\n');
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &nou_numero);
       resultat = findHouse(head, street_net, nou_numero);
+      if (nou_numero==0)return;
       if (resultat != NULL) {
         printCoordinates(resultat->house);
         return;
@@ -205,23 +208,24 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
       printf("3. %s\n", sug3);
       opcions++;
     }
+     printf("4. Exit (0)\n");
   } else {
     printf("No s'ha trobat res similar.\n");
   }
-  if (opcions >= 1) {
+    if (opcions >= 1) {
     while (true) {
       int opcio;
       printf("Escull una opció (1-%d): ", opcions);
       int valid_number = scanf("%d", &opcio);
-      while (valid_number != 1 || 1 > opcio || opcio > opcions) {
+      while (valid_number != 1 || 0 > opcio || opcio > opcions) {
         // vaciar el buffer
         while (getchar() != '\n')
           ;
         printf("Si us plau introdueixi un nombre vàlid: ");
         valid_number = scanf("%d", &opcio);
       }
-
-      if (opcio == 1) {
+      if (opcio == 0) return;
+      else if (opcio == 1) {
         strcpy(final, sug1);
         break;
       } else if (opcio == 2 && opcions >= 2) {
@@ -257,7 +261,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     int valid_number = scanf("%d", &finalnum);
     HouseNode *res = findHouse(head, final, finalnum);
     if (res != NULL) {
-      printCoordinates(resultat->house);
+      printCoordinates(res->house);
       return;
     }
     while (valid_number != 1 || res == NULL) {
@@ -287,41 +291,7 @@ int min3(int a, int b, int c) {
     return b; // Retorna b si és el més petit
   return c;   // Si no, retorna c
 }
-// LEVENSHTEIN
-int levenshteinDistance(char *a, char *b) {
-  if (!a || !b)
-    return 1000;
-  int m = strlen(a);   // Longitud del primer string
-  int n = strlen(b);   // Longitud del segon string
-  int i, j;            // Variables per als índexs dels bucles
-  int D[m + 1][n + 1]; // Matriu per guardar els càlculs de distància
 
-  // Inicialitzem la primera columna (cost de borrar caràcters)
-  for (i = 0; i <= m; i++) {
-    D[i][0] = i;
-  }
-
-  // Inicialitzem la primera fila (cost d'inserir caràcters)
-  for (j = 0; j <= n; j++) {
-    D[0][j] = j;
-  }
-
-  // Omplim la matriu comparant caràcter a caràcter
-  for (i = 1; i <= m; i++) {
-    for (j = 1; j <= n; j++) {
-      int cost;
-      // Si els caràcters són iguals, el cost de substitució és 0
-      if (a[i - 1] == b[j - 1]) {
-        cost = 0;
-      } else {
-        cost = 1; // Si són diferents, el cost és 1
-      }
-      // Triem el camí més curt entre eliminació, inserció i substitució
-      D[i][j] = min3(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + cost);
-    }
-  }
-  return D[m][n]; // Retornem el valor de l'última cel·la (distància total)
-}
 
 void freeHouses(HouseNode *head) {
   while (head != NULL) {    // Mentre la llista no estigui buida

@@ -106,7 +106,6 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
   if (d1 < 100) {
     printf("1. %s\n", sug1);
     opcions++;
-  }
   if (d2 < 100) {
     printf("2. %s\n", sug2);
     opcions++;
@@ -115,7 +114,8 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     printf("3. %s\n", sug3);
     opcions++;
   }
-
+   printf("4. Exit (0)\n");
+  }
   // Si no s'ha imprès ninguna vol dir que no s'ha trobat ningún carrer similar,
   // per tant ho imprimim
   if (opcions == 0) {
@@ -127,9 +127,16 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     while (true) {
       int opcio;
       printf("Escull una opció (1-%d): ", opcions);
-      scanf("%d", &opcio);
-
-      if (opcio == 1) {
+      int valid_number = scanf("%d", &opcio);
+      while (valid_number != 1 || 0 > opcio || opcio > opcions) {
+        // vaciar el buffer
+        while (getchar() != '\n')
+          ;
+        printf("Si us plau introdueixi un nombre vàlid: ");
+        valid_number = scanf("%d", &opcio);
+      }
+      if (opcio==0) return;
+      else if (opcio == 1) {
         strcpy(final, sug1);
         break;
       } else if (opcio == 2 && opcions >= 2) {

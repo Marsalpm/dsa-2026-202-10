@@ -40,7 +40,7 @@ int main() {
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &mode);
     }
-
+    
     if (mode == 1) {
       char filename[100];
       snprintf(filename, sizeof(filename), "maps/%s/houses.txt", mapname);
