@@ -1,5 +1,6 @@
 #include "place.h"
 #include "houses.h"
+#include "../test/utils.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -50,8 +51,8 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
 
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
+
 void cerca_inteligent_places(PlaceNode *head, char *name) {
-  char final[100] = "";
   PlaceNode *resultat = findPlace(head, name);
   // Cerca exacta
   if (resultat != NULL) {
@@ -59,18 +60,44 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     return;
   }
   // Cerca d'opcions similars
-  printf("Lloc '%s' no trobat.\n", name);
-  printf("Volies dir:\n");
+  printf("Lloc '%s' no trobat. Volies dir:\n", name);
 
-  char sug1[100] = "", sug2[100] = "", sug3[100] = "";
-  int d1 = 100, d2 = 100, d3 = 100;
+ // char sug1[100] = "", sug2[100] = "", sug3[100] = "";
+  //int d1 = 100, d2 = 100, d3 = 100;
 
+  Leve *sugList = NULL;
   PlaceNode *temp = head;
 
-  while (temp != NULL) {
-    // Trobem la distància de Levenshtein del place actual
-    int d = levenshteinDistance(name, temp->place.name);
+  while (temp != NULL) {   
+    int d = levenshteinDistance(name, temp->place.name);  // Trobem la distància de Levenshtein del place actual
+    sugList = addSugestion(sugList, temp->place.name, d);
+    temp = temp->next;
+  }
 
+  Leve *aux = sugList;
+  int count = 0;
+  while(aux && count<3){
+    printf("%d. %s\n", count +1, aux->name);
+    aux = aux->next;
+    count++;
+  }
+
+  if (count > 0){
+    int opcio;
+    printf("Escull una opcio (0 per sortir): ");
+    if (scanf("%d", &opcio) ==1 && opcio > 0 && opcio<=count){
+      aux = sugList;
+      for(int j = 1; j < opcio; j++) aux = aux->next;
+      PlaceNode *final_res = findPlace (head, aux->name);
+      if(final_res != NULL) printf("Tribat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
+    }else{
+      printf("NO s'ha trobat\n");
+    }
+    freeSugestion(sugList);
+  }
+
+}
+  /*/}
     // Evitar duplicats
     if (strcmp(temp->place.name, sug1) == 0 ||
         strcmp(temp->place.name, sug2) == 0 ||
@@ -98,7 +125,7 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     }
 
     temp = temp->next;
-  }
+  
 
   int opcions = 0;
   // Imprimir les opcions si aquestes tenen una distància de Levenshtein més
@@ -157,7 +184,7 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
       printf("Error inesperat.\n");
     }
   }
-}
+}*/
 
 void freePlaces(PlaceNode *head) {
   while (head != NULL) {    // Mentre la llista no estigui buida

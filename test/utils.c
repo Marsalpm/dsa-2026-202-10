@@ -89,7 +89,45 @@ int levenshteinDistance(char *a, char *b) {
 }
 
 Leve* addSugestion(Leve *head, char *name, int dist){
-  if (dist > 7) retun head;
+  if (dist > 7) return head; //Si la distancia es molt alta, no ens interessa
+ 
+  Leve *actual = head; // Evitem duplicats
+  while (actual != NULL){
+    if (strcasecmp(actual->name, name) == 0) return head;
+    actual = actual->next;
+  }
+
+  Leve *newNode = (Leve*)malloc(sizeof(Leve)); //Creem node nou
+  if(!newNode) return head; //Error de memoria
+
+  strncpy(newNode->name, name, 99);
+  newNode->name[99]= '\0';
+  newNode->distance = dist;
+  newNode->next = NULL;
+
+  //Incerció ordenada
+  if(head == NULL || dist < head->distance){ //Si llista buida o el nou és millor
+    newNode->next = head;
+    return newNode;
+  }
+
+  Leve *temp = head; //Buscar el lloc correcte entremig o final
+  while(temp->next != NULL && temp->next->distance <= dist){
+    temp = temp->next;
+  }
+  newNode->next = temp->next;
+  temp->next = newNode;
+
+  return head;
+
+}
+
+void freeSugestion(Leve *head){
+  while(head != NULL){
+    Leve *temp = head;
+    head = head->next;
+    free(temp);
+  }
 }
 
 //Algoritme de Haversine
