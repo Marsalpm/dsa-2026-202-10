@@ -29,7 +29,7 @@ HouseNode *loadHouses(char *filename) {
   while (fgets(line, sizeof(line), file)) { // Llegim el fitxer línia a línia fins al final
     House house;        // Creem una estructura temporal per a la casa
     // Parsegem la línia separada per punts i coma i guardem les dades
-    if (sscanf(line, " %99[^,] ,%d ,%lf ,%lf,%d,%d", house.street, &house.number, &house.lat, &house.lon,&house.id1,&house.id2) == 6) {
+    if (sscanf(line, " %99[^,] ,%d ,%lf ,%lf", house.street, &house.number, &house.lat, &house.lon) == 4) {
       head = addHouse(head, house); // Afegim la casa parsejada a la llista
     }
   }
@@ -91,8 +91,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     printCoordinates(resultat->house); // Si existeix, imprimim coordenades
     printfSetreetSegment(resultat->house);
     return;                            // Sortim de la funció
-  } else
-    printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
+  } else printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
 
   // Si no hi és, busquem si almenys el carrer existeix per suggerir números
   HouseNode *temp = head; // Punter temporal per recórrer la llista
@@ -102,14 +101,15 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     if (strcasecmp(temp->house.street, street_net) == 0) {
       street_trobat = true;// Marquem que el carrer existeix
       break; 
-   // }
+    }
     temp = temp->next; // Passem al següent node
+    
   }
   // Si el carrer existeix però el número és incorrecte deixem triar
   if (street_trobat) {
     strcpy(final, street_net);
   }else{
-    printf("Números vàlids disponibles al carrer %s:\n", street_net);
+    printf("Carrers semblants a %s:\n", street_net);
     Leve *sugList = NULL;
     HouseNode *temp1 = head;
     while (temp1 != NULL) {
@@ -130,13 +130,23 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
 
     int opcio;
     printf("Escull una opcio: ");
-    if(scanf("%d", &opcio) == 1 && opcio>0 && opcio<=count){
+    int valid_number = scanf("%d", &opcio);
+    while (valid_number != 1 || opcio<0 || opcio>count ) {
+      // vaciar el buffer
+      while (getchar() != '\n');
+      printf("Si us plau introdueixi un nombre vàlid: ");
+      valid_number = scanf("%d", &opcio);
+    }
+    
+    if(opcio>0 && opcio<=count){
       aux = sugList;
       for(int j = 1; j < opcio; j++) aux = aux->next;
       strcpy(final, aux->name);
     }
     freeSugestion(sugList);
-
+    if(opcio==0) return;
+    }
+  
   if(strlen(final)>0){
     printf("Números vàlids disponibles al carrer %s:\n", final);
     HouseNode *temp2 = head;
@@ -151,8 +161,8 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
       temp2 = temp2->next;
     }
 
-    if (count % 5 != 0) printf("|\n");
-   
+    if (count2 % 5 != 0) printf("|\n");
+    printf("0. Exit\n");
     int finalnum;
     printf("Escull el número: ");
     int valid_number = scanf("%d", &finalnum);
@@ -162,6 +172,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
       printfSetreetSegment(resultat->house);
       return;
     }
+    if(finalnum==0) return;
     while (valid_number != 1 || res == NULL) {
       // vaciar el buffer
       while (getchar() != '\n');
@@ -173,11 +184,12 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
         printfSetreetSegment(resultat->house);
         return;
       }
+      if(valid_number == 1 && res == NULL && finalnum==0) return;
     }
   }
+
 }
-}
-}
+
 
 int min3(int a, int b, int c) {
   if (a <= b && a <= c) return a; // Retorna a si és el més petit

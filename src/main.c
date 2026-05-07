@@ -30,7 +30,7 @@ int main() {
       continue;
     }
 
-    if (mode == 0) return;
+    if (mode == 0) return 0;
 
     else if (mode == 1) {
       char filename[150];

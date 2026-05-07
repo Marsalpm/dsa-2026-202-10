@@ -48,7 +48,6 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
     }
     current = current->next; // Si no, avancem al següent node de la llista
   }
-
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 
@@ -82,109 +81,28 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     count++;
   }
 
-  if (count > 0){
     int opcio;
     printf("Escull una opcio (0 per sortir): ");
-    if (scanf("%d", &opcio) ==1 && opcio > 0 && opcio<=count){
+    int valid_number = scanf("%d", &opcio);
+    while(valid_number!= 1|| opcio<0 || opcio>count){
+      printf("Si us plau introdueixi un nombre vàlid: ");
+      valid_number = scanf("%d", &opcio);
+      if(0<opcio && opcio<4){
       aux = sugList;
       for(int j = 1; j < opcio; j++) aux = aux->next;
       PlaceNode *final_res = findPlace (head, aux->name);
-      if(final_res != NULL) printf("Tribat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
-    }else{
-      printf("NO s'ha trobat\n");
+      if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
+      }
     }
+    if(0<opcio && opcio<4){
+      aux = sugList;
+      for(int j = 1; j < opcio; j++) aux = aux->next;
+      PlaceNode *final_res = findPlace (head, aux->name);
+      if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
+      }
     freeSugestion(sugList);
-  }
-
+    if(opcio==0)return; 
 }
-  /*/}
-    // Evitar duplicats
-    if (strcmp(temp->place.name, sug1) == 0 ||
-        strcmp(temp->place.name, sug2) == 0 ||
-        strcmp(temp->place.name, sug3) == 0) {
-      temp = temp->next;
-      continue;
-    }
-    // Si el place actual té una distància de Levenshtein més petita que alguna
-    // de les opcions es fa intercanvi, sempre ordenat de més petita a més gran
-    if (d < d1) {
-      d3 = d2;
-      strcpy(sug3, sug2);
-      d2 = d1;
-      strcpy(sug2, sug1);
-      d1 = d;
-      strcpy(sug1, temp->place.name);
-    } else if (d < d2) {
-      d3 = d2;
-      strcpy(sug3, sug2);
-      d2 = d;
-      strcpy(sug2, temp->place.name);
-    } else if (d < d3) {
-      d3 = d;
-      strcpy(sug3, temp->place.name);
-    }
-
-    temp = temp->next;
-  
-
-  int opcions = 0;
-  // Imprimir les opcions si aquestes tenen una distància de Levenshtein més
-  // petita que 100
-  if (d1 < 100) {
-    printf("1. %s\n", sug1);
-    opcions++;
-  if (d2 < 100) {
-    printf("2. %s\n", sug2);
-    opcions++;
-  }
-  if (d3 < 100) {
-    printf("3. %s\n", sug3);
-    opcions++;
-  }
-   printf("4. Exit (0)\n");
-  }
-  // Si no s'ha imprès ninguna vol dir que no s'ha trobat ningún carrer similar,
-  // per tant ho imprimim
-  if (opcions == 0) {
-    printf("No s'ha trobat cap lloc similar.\n");
-    return;
-  }
-
-  if (opcions > 0) {
-    while (true) {
-      int opcio;
-      printf("Escull una opció (1-%d): ", opcions);
-      int valid_number = scanf("%d", &opcio);
-      while (valid_number != 1 || 0 > opcio || opcio > opcions) {
-        // vaciar el buffer
-        while (getchar() != '\n')
-          ;
-        printf("Si us plau introdueixi un nombre vàlid: ");
-        valid_number = scanf("%d", &opcio);
-      }
-      if (opcio==0) return;
-      else if (opcio == 1) {
-        strcpy(final, sug1);
-        break;
-      } else if (opcio == 2 && opcions >= 2) {
-        strcpy(final, sug2);
-        break;
-      } else if (opcio == 3 && opcions >= 3) {
-        strcpy(final, sug3);
-        break;
-      } else {
-        printf("Opció no vàlida.\n");
-      }
-    }
-    PlaceNode *final_res = findPlace(head, final);
-
-    if (final_res != NULL) {
-      printf("Trobat a (%f, %f)\n", final_res->place.lat, final_res->place.lon);
-    } else {
-      printf("Error inesperat.\n");
-    }
-  }
-}*/
 
 void freePlaces(PlaceNode *head) {
   while (head != NULL) {    // Mentre la llista no estigui buida
