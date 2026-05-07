@@ -30,9 +30,9 @@ int main() {
       continue;
     }
 
-    if (mode == 0) break;
-    
-    if (mode == 1) {
+    if (mode == 0) return;
+
+    else if (mode == 1) {
       char filename[150];
       snprintf(filename, sizeof(filename), "maps/%s/houses.txt", mapname);
       HouseNode *houses = loadHouses(filename);
