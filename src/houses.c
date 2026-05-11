@@ -167,25 +167,26 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     printf("Escull el número: ");
     int valid_number = scanf("%d", &finalnum);
     HouseNode *res = findHouse(head, final, finalnum);
-    if (res != NULL) {
-      printCoordinates(res->house);
-      printfSetreetSegment(resultat->house);
-      return;
-    }
     if(finalnum==0) return;
-    while (valid_number != 1 || res == NULL) {
+    while (valid_number != 1 || res == NULL ) {
       // vaciar el buffer
       while (getchar() != '\n');
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &finalnum);
       res = findHouse(head, final, finalnum);
-      if (res != NULL) {
+      if (res != NULL && valid_number==1) {
         printCoordinates(res->house);
         printfSetreetSegment(resultat->house);
         return;
       }
       if(valid_number == 1 && res == NULL && finalnum==0) return;
     }
+    if (res != NULL) {
+      printCoordinates(res->house);
+      printfSetreetSegment(resultat->house);
+      return;
+    }
+    if(finalnum==0) return;
   }
 
 }

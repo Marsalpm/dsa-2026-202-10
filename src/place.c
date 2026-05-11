@@ -80,28 +80,38 @@ void cerca_inteligent_places(PlaceNode *head, char *name) {
     aux = aux->next;
     count++;
   }
+  if(count==0){
+    printf("No s'han trobat opcions semblants\n");
+    return;
+  }
+  printf("0. Exit\n");
 
     int opcio;
-    printf("Escull una opcio (0 per sortir): ");
+    printf("Escull una opció: ");
     int valid_number = scanf("%d", &opcio);
     while(valid_number!= 1|| opcio<0 || opcio>count){
+      while (getchar() != '\n');
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &opcio);
-      if(0<opcio && opcio<4){
+      if(0<opcio && opcio<=count){
       aux = sugList;
       for(int j = 1; j < opcio; j++) aux = aux->next;
       PlaceNode *final_res = findPlace (head, aux->name);
       if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
       }
     }
-    if(0<opcio && opcio<4){
+    if(opcio==0){
+      freeSugestion(sugList);
+      return;
+    }
+    else if(0<opcio && opcio<=count){
       aux = sugList;
       for(int j = 1; j < opcio; j++) aux = aux->next;
       PlaceNode *final_res = findPlace (head, aux->name);
       if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
       }
     freeSugestion(sugList);
-    if(opcio==0)return; 
+     
 }
 
 void freePlaces(PlaceNode *head) {
