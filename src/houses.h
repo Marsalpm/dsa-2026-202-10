@@ -6,8 +6,6 @@ typedef struct {
   int number;
   double lat;
   double lon;
-  int id1;
-  int id2;
 } House;
 
 typedef struct HouseNode {

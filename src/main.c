@@ -10,6 +10,7 @@
 #include <string.h>
 #include <strings.h>
 #include <sys/stat.h>
+#include "streers.h"
 
 
 int main() {
