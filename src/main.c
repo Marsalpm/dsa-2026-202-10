@@ -87,7 +87,8 @@ int main() {
       printf("Intodueix el nom del lloc: ");
       scanf(" %[^\n]", place);
       cerca_inteligent_places(places, place, streets); // funció de cerca
-      freePlaces(places);                     // Alliberem memòria
+      freePlaces(places);  
+      freeStreets(streets);// Alliberem memòria
       // sortim del bucle
       break;
     }
