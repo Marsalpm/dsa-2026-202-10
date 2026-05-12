@@ -10,7 +10,7 @@
 #include <string.h>
 #include <strings.h>
 #include <sys/stat.h>
-#include "streers.h"
+#include "streets.h"
 
 
 int main() {
@@ -22,7 +22,7 @@ int main() {
          "2xl_1): ");
   scanf("%19s", mapname);
 
-  int mode = 0;
+  int mode;
   while (true) {
     printf("Com vols introduir la posició? ((1)address / (2)coordinate / (3)place / (0)exit): ");
     int valid_number = scanf("%d", &mode);
@@ -39,8 +39,7 @@ int main() {
       HouseNode *houses = loadHouses(filename);
       while (houses == NULL) {
         printf("Error carregant cases\n");
-        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, "
-               "lg_1, xl_1 or 2xl_1): ");
+        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, lg_1, xl_1 or 2xl_1): ");
         scanf("%19s", mapname);
         snprintf(filename, sizeof(filename), "maps/%s/houses.txt", mapname);
         houses = loadHouses(filename);
@@ -65,12 +64,13 @@ int main() {
       freeHouses(houses);
       break; // sortim del bucle
     }
+    else if (mode == 2) printf("Not implemented yet\n");
 
     else if (mode == 3) {
       // Demanar lloc
       char filename[150];
       snprintf(filename, sizeof(filename), "maps/%s/places.txt", mapname);
-      PlaceNode *places = loadPlaces(filename); // també carrega places
+      PlaceNode *places = loadPlaces(filename); 
       
       while (places == NULL) {
         printf("Error carregant llocs\n");
@@ -80,19 +80,16 @@ int main() {
         snprintf(filename, sizeof(filename), "maps/%s/places.txt", mapname);
         places = loadPlaces(filename);
       }
-
+      snprintf(filename,sizeof(filename),"maps/%s/streets.txt",mapname); // també carreguem carrers
+      StreetNode *streets = loadStreets(filename);
       printf("Places carregat correctament\n");
       char place[100];
       printf("Intodueix el nom del lloc: ");
       scanf(" %[^\n]", place);
-      cerca_inteligent_places(places, place); // funció de cerca
+      cerca_inteligent_places(places, place, streets); // funció de cerca
       freePlaces(places);                     // Alliberem memòria
       // sortim del bucle
       break;
-    }
-
-    else if (mode == 2) {
-      printf("Not implemented yet\n");
     }
   }
   return 0;

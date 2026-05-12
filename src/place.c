@@ -1,6 +1,7 @@
 #include "place.h"
-#include "houses.h"
 #include "../test/utils.h"
+#include "houses.h"
+#include "streets.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -51,67 +52,77 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 
-void cerca_inteligent_places(PlaceNode *head, char *name) {
+void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
   PlaceNode *resultat = findPlace(head, name);
   // Cerca exacta
   if (resultat != NULL) {
     printf("Trobat a (%f, %f)\n", resultat->place.lat, resultat->place.lon);
+    processLocation(resultat->place.lat, resultat->place.lon, streets);
     return;
   }
   // Cerca d'opcions similars
   printf("Lloc '%s' no trobat. Volies dir:\n", name);
 
- // char sug1[100] = "", sug2[100] = "", sug3[100] = "";
-  //int d1 = 100, d2 = 100, d3 = 100;
+  // char sug1[100] = "", sug2[100] = "", sug3[100] = "";
+  // int d1 = 100, d2 = 100, d3 = 100;
 
   Leve *sugList = NULL;
   PlaceNode *temp = head;
 
-  while (temp != NULL) {   
-    int d = levenshteinDistance(name, temp->place.name);  // Trobem la distància de Levenshtein del place actual
+  while (temp != NULL) {
+    int d = levenshteinDistance(
+        name, temp->place
+                  .name); // Trobem la distància de Levenshtein del place actual
     sugList = addSugestion(sugList, temp->place.name, d);
     temp = temp->next;
   }
 
   Leve *aux = sugList;
   int count = 0;
-  while(aux && count<3){
-    printf("%d. %s\n", count +1, aux->name);
+  while (aux && count < 3) {
+    printf("%d. %s\n", count + 1, aux->name);
     aux = aux->next;
     count++;
   }
-  if(count==0){
+  if (count == 0) {
     printf("No s'han trobat opcions semblants\n");
     return;
   }
   printf("0. Exit\n");
 
-    int opcio;
-    printf("Escull una opció: ");
-    int valid_number = scanf("%d", &opcio);
-    while(valid_number!= 1|| opcio<0 || opcio>count){
-      while (getchar() != '\n');
-      printf("Si us plau introdueixi un nombre vàlid: ");
-      valid_number = scanf("%d", &opcio);
-      if(0<opcio && opcio<=count){
+  int opcio;
+  printf("Escull una opció: ");
+  int valid_number = scanf("%d", &opcio);
+  while (valid_number != 1 || opcio < 0 || opcio > count) {
+    while (getchar() != '\n')
+      ;
+    printf("Si us plau introdueixi un nombre vàlid: ");
+    valid_number = scanf("%d", &opcio);
+    if (0 < opcio && opcio <= count) {
       aux = sugList;
-      for(int j = 1; j < opcio; j++) aux = aux->next;
-      PlaceNode *final_res = findPlace (head, aux->name);
-      if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
+      for (int j = 1; j < opcio; j++)
+        aux = aux->next;
+      PlaceNode *final_res = findPlace(head, aux->name);
+      if (final_res != NULL){
+      printf("Trobat a (%f, %f)\n", final_res->place.lat, final_res->place.lon);
+      processLocation(final_res->place.lat, final_res->place.lon, streets);
       }
     }
-    if(opcio==0){
-      freeSugestion(sugList);
-      return;
-    }
-    else if(0<opcio && opcio<=count){
-      aux = sugList;
-      for(int j = 1; j < opcio; j++) aux = aux->next;
-      PlaceNode *final_res = findPlace (head, aux->name);
-      if(final_res != NULL) printf("Trobat a (%f. %f)\n", final_res->place.lat, final_res->place.lon);
-      }
+  }
+  if (opcio == 0) {
     freeSugestion(sugList);
-     
+    return;
+  } else if (0 < opcio && opcio <= count) {
+    aux = sugList;
+    for (int j = 1; j < opcio; j++)
+      aux = aux->next;
+    PlaceNode *final_res = findPlace(head, aux->name);
+    if (final_res != NULL) {
+      printf("Trobat a (%f, %f)\n", final_res->place.lat, final_res->place.lon);
+      processLocation(final_res->place.lat, final_res->place.lon, streets);
+    }
+  }
+  freeSugestion(sugList);
 }
 
 void freePlaces(PlaceNode *head) {

@@ -1,6 +1,6 @@
 #ifndef PLACE_H
 #define PLACE_H
-
+typedef struct StreetNode StreetNode;
 typedef struct Place {
   char name[100];
   double lat;
@@ -15,6 +15,6 @@ typedef struct PlaceNode {
 PlaceNode *addPlace(PlaceNode *head, Place p);
 PlaceNode *loadPlaces(char *filename);
 PlaceNode *findPlace(PlaceNode *head, char *name);
-void cerca_inteligent_places(PlaceNode *head, char *name);
+void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets);
 void freePlaces(PlaceNode *head);
 #endif
