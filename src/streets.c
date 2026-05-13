@@ -101,7 +101,8 @@ StreetNode *findClosestStreet(StreetNode *head, double userLat,double userLon) {
 
 void printConnectedStreets(StreetNode *head, Street target) {
   StreetNode *current = head;
-
+  char printed[100][100];
+  int printedCount = 0;
 
   printf("- %s\n", target.name);
 
@@ -112,13 +113,27 @@ void printConnectedStreets(StreetNode *head, Street target) {
 
     bool connected = false;
 
-    if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 ||
-        s.id2 == target.id2) {
-      connected = true;
-    }
-    if (connected && !(s.id1 == target.id1 &&
-                       s.id2 == target.id2)) { // evitar carrers duplicats
-      printf("     - %s\n", s.name);
+    if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 || s.id2 == target.id2) connected = true;
+    
+    if (connected && strcmp(s.name, target.name) != 0) {
+
+      bool alreadyPrinted = false;
+
+      for (int i = 0; i < printedCount; i++) {
+        if (strcmp(printed[i], s.name) == 0) {
+          alreadyPrinted = true;
+          break;
+        }
+      }
+
+
+      if (!alreadyPrinted) {
+
+        printf("     - %s\n", s.name);
+
+        strcpy(printed[printedCount], s.name);
+        printedCount++;
+      }
     }
 
     current = current->next;

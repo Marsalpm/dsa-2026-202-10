@@ -111,8 +111,7 @@ int main() {
       
       while (places == NULL) {
         printf("Error carregant llocs\n");
-        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, "
-               "lg_1, xl_1 or 2xl_1): ");
+        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1,lg_1, xl_1 or 2xl_1): ");
         scanf("%19s", mapname);
         snprintf(filename, sizeof(filename), "maps/%s/places.txt", mapname);
         places = loadPlaces(filename);
