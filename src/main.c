@@ -78,7 +78,7 @@ int main() {
         snprintf(filename,sizeof(filename),"maps/%s/streets.txt",mapname);
         streets = loadStreets(filename);
       }
-
+      printf("Streets carregat corectament\n");
       double lat, lon;
 
       printf("Lat: ");
