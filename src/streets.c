@@ -76,8 +76,7 @@ double haversine(double lat1, double lon1, double lat2, double lon2) {
   return EARTH_RADIUS * c;
 }
 
-StreetNode *findClosestStreet(StreetNode *head, double userLat,
-                              double userLon) {
+StreetNode *findClosestStreet(StreetNode *head, double userLat,double userLon) {
 
   StreetNode *current = head;
   StreetNode *closest = NULL;
@@ -132,7 +131,7 @@ void processLocation(double lat, double lon, StreetNode *streets) {
   if (closest == NULL)
     return;
 
-  printf("\nClosest street: %s\n", closest->street.name);
+  printf("Closest street: %s\n", closest->street.name);
 
   printf("Between %lld (%f, %f) and %lld (%f, %f)\n", closest->street.id1,
          closest->street.lat1, closest->street.lon1, closest->street.id2,

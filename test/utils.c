@@ -90,7 +90,7 @@ int levenshteinDistance(char *a, char *b) {
 }
 
 Leve *addSugestion(Leve *head, char *name, int dist) {
-  if (dist > 15)
+  if (dist > 30)
     return head; // Si la distancia es molt alta, no ens interessa
 
   Leve *actual = head; // Evitem duplicats

@@ -1,6 +1,7 @@
 #include "houses.h"
 #include "../test/utils.h"
 #include <stdbool.h>
+#include "streets.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -66,13 +67,12 @@ HouseNode *findHouse(HouseNode *head, char *street, int number) {
 }
 // Fucnions auxilars:
 void printCoordinates(House house) {
-  printf("Trobat a (%f, %f)\n", house.lat,
-         house.lon); // Mostra les coordenades per pantalla
+  printf("\nTrobat a (%f, %f)\n", house.lat,house.lon); // Mostra les coordenades per pantalla
 }
 
 // Cerca un carrer gestionant abreviatures, números erronis i similituds
 // FUNCIO DE CERCA INTELIGENT LAB 2 I LAB 3:
-void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
+void cerca_inteligent_houses(HouseNode *head, char *street, int number, StreetNode *streets) {
   char final[100] = "";
   char street_net[100]; // Variable per guardar el nom del carrer "netejat"
 
@@ -93,7 +93,8 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
   // Busquem si la casa exacta existeix amb el nom netejat
   HouseNode *resultat = findHouse(head, street_net, number);
   if (resultat != NULL) {
-    printCoordinates(resultat->house); // Si existeix, imprimim coordenades
+    printCoordinates(resultat->house);
+    processLocation(resultat->house.lat,resultat->house.lon, streets); // Si existeix, imprimim coordenades
     return;                            // Sortim de la funció
   } else
     printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
@@ -137,8 +138,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     int valid_number = scanf("%d", &opcio);
     while (valid_number != 1 || opcio < 0 || opcio > count) {
       // vaciar el buffer
-      while (getchar() != '\n')
-        ;
+      while (getchar() != '\n');
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &opcio);
     }
@@ -180,13 +180,13 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
       return;
     while (valid_number != 1 || res == NULL) {
       // vaciar el buffer
-      while (getchar() != '\n')
-        ;
+      while (getchar() != '\n');
       printf("Si us plau introdueixi un nombre vàlid: ");
       valid_number = scanf("%d", &finalnum);
       res = findHouse(head, final, finalnum);
       if (res != NULL && valid_number == 1) {
         printCoordinates(res->house);
+        processLocation(res->house.lat,res->house.lon, streets);
         return;
       }
       if (valid_number == 1 && res == NULL && finalnum == 0)
@@ -194,6 +194,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number) {
     }
     if (res != NULL) {
       printCoordinates(res->house);
+      processLocation(res->house.lat,res->house.lon, streets);
       return;
     }
     if (finalnum == 0)

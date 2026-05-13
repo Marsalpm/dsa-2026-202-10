@@ -44,6 +44,8 @@ int main() {
         snprintf(filename, sizeof(filename), "maps/%s/houses.txt", mapname);
         houses = loadHouses(filename);
       }
+      snprintf(filename,sizeof(filename),"maps/%s/streets.txt",mapname); // també carreguem carrers
+      StreetNode *streets = loadStreets(filename);
       printf("Houses carregat correctament\n");
       // Demanar carrer i número
       char carrer[100];
@@ -60,12 +62,46 @@ int main() {
         valid_number = scanf("%d", &numero);
       }
 
-      cerca_inteligent_houses(houses, carrer, numero);
+      cerca_inteligent_houses(houses, carrer, numero, streets);
       freeHouses(houses);
+      freeStreets(streets);
       break; // sortim del bucle
     }
-    else if (mode == 2) printf("Not implemented yet\n");
+    else if (mode == 2){
+      char filename[150];
+      snprintf(filename,sizeof(filename),"maps/%s/streets.txt",mapname); // també carreguem carrers
+      StreetNode *streets = loadStreets(filename);
+      while(streets==NULL){
+        printf("Error carregant streets\n");
+        printf("Introdueix el nom d'un mapa correcte (ex: xs_1, xs_2, md_1, lg_1, xl_1 or 2xl_1): ");
+        scanf("%19s", mapname);
+        snprintf(filename,sizeof(filename),"maps/%s/streets.txt",mapname);
+        streets = loadStreets(filename);
+      }
 
+      double lat, lon;
+
+      printf("Lat: ");
+      int valid_number = scanf("%lf", &lat);
+      while (valid_number != 1) {
+        // buidar el buffer
+        while (getchar() != '\n');
+        printf("Si us plau introdueixi un nombre vàlid: ");
+        valid_number = scanf("%lf", &lat);
+      }
+    
+      printf("Lon: ");
+      valid_number=scanf("%lf", &lon);
+      while (valid_number != 1) {
+        // buidar el buffer
+        while (getchar() != '\n');
+        printf("Si us plau introdueixi un nombre vàlid: ");
+        valid_number = scanf("%lf", &lon);
+      }
+      printf("\n");
+      processLocation(lat,lon,streets);
+      break;
+    }
     else if (mode == 3) {
       // Demanar lloc
       char filename[150];
