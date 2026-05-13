@@ -100,6 +100,7 @@ int main() {
       }
       printf("\n");
       processLocation(lat,lon,streets);
+      freeStreets(streets);
       break;
     }
     else if (mode == 3) {
