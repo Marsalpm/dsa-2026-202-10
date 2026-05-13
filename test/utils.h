@@ -1,6 +1,8 @@
 #ifndef ASSERTS_H
 #define ASSERTS_H
 #include "../src/houses.h"
+#include <stddef.h>
+
 
 typedef struct Leve {
   char name[100];
@@ -18,5 +20,6 @@ void successtest();
 void runningtest(const char *description);
 void allsuccess();
 void minuscules(char *str);
+void assertNull(void *found);
 
 #endif
