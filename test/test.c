@@ -12,6 +12,7 @@ int main() {
     houses_test();
     haversine_test();
     sugestion_test();
+    place_test();
   }
   allsuccess();
 }

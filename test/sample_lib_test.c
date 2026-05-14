@@ -2,6 +2,7 @@
 #include "../src/houses.h"
 #include "../src/streets.h"
 #include "utils.h"
+#include "../src/place.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <math.h>
@@ -403,7 +404,7 @@ void test_addSugestion_distancia_alta() {
   }
   successtest();
 }
- 
+
 void sugestion_test() {
   running("sugestion_test");
   {
@@ -414,3 +415,98 @@ void sugestion_test() {
   }
   success();
 }
+
+void test_addPlace_llista_buida(){
+  runningtest("test_addPLace_llista_buida");
+  {
+    Place p  = {"Parc Güell", 41.4145, 2.1527};
+    PlaceNode *list = NULL;
+    list = addPlace(list,p);
+    assertEquals(list->place.name, "Parc Güell");
+    freePlaces(list);
+  }
+  successtest();
+}
+
+void test_addPlace_insercio_principi(){
+   runningtest("test_addPlace_insercio_principi");
+   {
+    Place p1 = {"Parc Güell", 41.4145, 2.1527};
+    Place p2 = {"Sagrada Familia", 41.4036, 2.1744};
+    PlaceNode *list = NULL;
+    list = addPlace(list, p1);
+    list = addPlace(list, p2);
+    assertEquals(list->place.name, "Sagrada Familia");
+    assertEquals(list->next->place.name, "Parc Güell");
+    freePlaces(list);
+   }
+   successtest();
+}
+
+void test_findPlace_existeix(){
+  runningtest("test_findPlace_lloc_existent");
+  {
+    Place p1 = {"Parc Güell", 41.4145, 2.1527};
+    Place p2 = {"Sagrada Familia", 41.4036, 2.1744};
+    PlaceNode *list = NULL;
+    list = addPlace(list, p1);
+    list = addPlace(list, p2);
+    PlaceNode *res = findPlace(list, "Parc Güell");
+    assertEquals(res->place.name, "Parc Güell");
+    freePlaces(list);
+  }
+  successtest();
+}
+
+void test_findPlace_case_insensitve(){
+  runningtest("test_findPlace_case_insensitive");
+  {
+    Place p = {"Parc Guell", 41.4145, 2.1527};
+    PlaceNode *list = NULL;
+    list = addPlace(list, p);
+    PlaceNode *res = findPlace(list, "parc guell");
+    assertEquals(res->place.name, "Parc Guell");
+    freePlaces(list);
+  }
+  successtest();
+}
+
+
+void test_findPlace_inexistent(){
+  runningtest("test_findPlace_lloc_inexistent_restorna_null");
+  {
+    Place p = {"Parc Guell", 41.4145, 2.1527};
+    PlaceNode *list = NULL;
+    list = addPlace(list, p);
+    PlaceNode *res = findPlace(list, "Lloc Fals");
+    assertNull(res);
+    freePlaces(list);
+  }
+  successtest();
+}
+ 
+void test_findPlace_llista_buida(){
+  runningtest("test_findPlace_llista_buida_retorna_nul");
+  {
+    PlaceNode *res = findPlace(NULL, "Parc Guell");
+    assertNull(res);
+  }
+  successtest();
+}
+
+void place_test(){
+  running("places_test");
+  {
+    test_addPlace_llista_buida();
+    test_addPlace_insercio_principi();
+    test_findPlace_existeix();
+    test_findPlace_case_insensitve();
+    test_findPlace_inexistent();
+    test_findPlace_llista_buida();
+  }
+  success();
+}
+
+
+
+
