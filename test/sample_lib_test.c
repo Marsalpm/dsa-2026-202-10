@@ -507,6 +507,47 @@ void place_test(){
   success();
 }
 
+void test_loadStreets_no_null() {
+  runningtest("test_loadStreets_no_null");
+    {
+        StreetNode *list = loadStreets("maps/xs_1/streets.txt");   // Intentem carregar el mapa xs_1 
+        if (list != NULL) { // Comprovem que la llista no estigui buida
+            successtest();
+        } else {
+            fprintf(stderr, "    Error: No s'ha pogut carregar maps/xs_1/streets.txt\n");
+            assertEqualsInt(1, 0); // Fem que hi hagi error
+        }
+        freeStreets(list);
+    }
+}
 
+void test_findClosestStreet_basic() {
+    runningtest("test_findClosestStreet_basic");
+    {
+        Street s = {1, 41.0, 2.0, 2, 41.2, 2.2, 1.0, "Carrer de Prova"};// Creem una llista amb un carrer per provar
+        StreetNode *list = NULL;
+        list = addStreet(list, s);
+
+        StreetNode *res = findClosestStreet(list, 41.11, 2.11); // Busquem el carrer més proper del midpoint 
+        
+        if (res != NULL && strcmp(res->street.name, "Carrer de Prova") == 0) {
+            successtest();
+        } else {
+            fprintf(stderr, "    Error: No s'ha trobat el carrer més proper correctament\n");
+            assertEqualsInt(1, 0);
+        }
+        freeStreets(list);
+    }
+}
+
+// Aquesta ajunta els tests de carrers
+void streets_test() {
+    running("streets_test");
+    {
+        test_loadStreets_no_null();
+        test_findClosestStreet_basic();
+    }
+    success();
+}
 
 

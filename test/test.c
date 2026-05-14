@@ -4,7 +4,6 @@
 
 int main() {
   {
-    // Call all test modules you want to run here
     sample_lib_test();
     minuscules_test();
     min3_test();
@@ -13,6 +12,7 @@ int main() {
     haversine_test();
     sugestion_test();
     place_test();
+    streets_test();
   }
   allsuccess();
 }

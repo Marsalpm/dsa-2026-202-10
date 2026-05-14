@@ -8,24 +8,17 @@
 #define EARTH_RADIUS 6371.0
 
 StreetNode *loadStreets(char *filename) {
-
   FILE *file = fopen(filename, "r");
-
   if (file == NULL) {
-
     printf("No s'ha pogut obrir streets.txt\n");
-
     return NULL;
   }
 
   StreetNode *head = NULL;
-
   char line[512];
 
   while (fgets(line, sizeof(line), file)) {
-
     Street s;
-
     if (sscanf(line, "%lld,%lf,%lf,%lld,%lf,%lf,%lf,%99[^\n]", &s.id1, &s.lat1,
                &s.lon1, &s.id2, &s.lat2, &s.lon2, &s.length, s.name) == 8) {
       head = addStreet(head, s);
@@ -36,26 +29,18 @@ StreetNode *loadStreets(char *filename) {
   return head;
 }
 
-StreetNode *addStreet(StreetNode *head, Street s) {
+StreetNode *addStreet(StreetNode *head, Street s) { //Afegir nodes a la llista
   StreetNode *newNode = malloc(sizeof(StreetNode));
-
-  if (!newNode)
-    return head;
-
+  if (!newNode) return head;
   newNode->street = s;
   newNode->next = head;
-
   return newNode;
 }
 
-void freeStreets(StreetNode *head) {
-
+void freeStreets(StreetNode *head) {  //Alliberem memoria
   while (head != NULL) {
-
     StreetNode *temp = head;
-
     head = head->next;
-
     free(temp);
   }
 }
@@ -80,22 +65,20 @@ StreetNode *findClosestStreet(StreetNode *head, double userLat,double userLon) {
 
   StreetNode *current = head;
   StreetNode *closest = NULL;
-  double minDistance = 10000;
+  double minDistance = 10000; //Distancia molt alta
                             
-  while (current != NULL) {
-    double midLat = (current->street.lat1 + current->street.lat2) / 2.0;
-
+  while (current != NULL) { 
+    double midLat = (current->street.lat1 + current->street.lat2) / 2.0;  //Calculem punt mitjà del segment de carrer
     double midLon = (current->street.lon1 + current->street.lon2) / 2.0;
-    double distance = haversine(userLat, userLon, midLat, midLon);
-    if (distance < minDistance) {
-
+    double distance = haversine(userLat, userLon, midLat, midLon);        //Calculem la distancia de la persona al punt mitja
+   
+    if (distance < minDistance) { //Si es mes petit que el que teniem, actualitzem
       minDistance = distance;
       closest = current;
     }
 
     current = current->next;
   }
-
   return closest;
 }
 
@@ -108,17 +91,11 @@ void printConnectedStreets(StreetNode *head, Street target) {
 
   printf("    Which is connected to:\n");
   while (current != NULL) {
-
     Street s = current->street;
-
     bool connected = false;
-
     if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 || s.id2 == target.id2) connected = true;
-    
     if (connected && strcmp(s.name, target.name) != 0) {
-
       bool alreadyPrinted = false;
-
       for (int i = 0; i < printedCount; i++) {
         if (strcmp(printed[i], s.name) == 0) {
           alreadyPrinted = true;
@@ -126,16 +103,12 @@ void printConnectedStreets(StreetNode *head, Street target) {
         }
       }
 
-
       if (!alreadyPrinted) {
-
         printf("     - %s\n", s.name);
-
         strcpy(printed[printedCount], s.name);
         printedCount++;
       }
     }
-
     current = current->next;
   }
 }
@@ -156,3 +129,4 @@ void processLocation(double lat, double lon, StreetNode *streets) {
 
   printConnectedStreets(streets, closest->street);
 }
+

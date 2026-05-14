@@ -63,9 +63,6 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
   // Cerca d'opcions similars
   printf("Lloc '%s' no trobat. Volies dir:\n", name);
 
-  // char sug1[100] = "", sug2[100] = "", sug3[100] = "";
-  // int d1 = 100, d2 = 100, d3 = 100;
-
   Leve *sugList = NULL;
   PlaceNode *temp = head;
 
@@ -94,8 +91,7 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
   printf("Escull una opció: ");
   int valid_number = scanf("%d", &opcio);
   while (valid_number != 1 || opcio < 0 || opcio > count) {
-    while (getchar() != '\n')
-      ;
+    while (getchar() != '\n');
     printf("Si us plau introdueixi un nombre vàlid: ");
     valid_number = scanf("%d", &opcio);
     if (0 < opcio && opcio <= count) {

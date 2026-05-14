@@ -1,6 +1,7 @@
 #ifndef STREETS_H
 #define STREETS_H
 
+
 typedef struct {
 
   long long id1;
@@ -34,4 +35,7 @@ double haversine(double lat1, double lon1, double lat2, double lon2);
 void printConnectedStreets(StreetNode *head, Street target);
 void processLocation(double lat, double lon, StreetNode *streets);
 
+StreetNode *findClosestStreet(StreetNode *head, double userLat, double userLon);
+void printConnectedStreets(StreetNode *head, Street target);
+void processLocation(double lat, double lon, StreetNode *streets);
 #endif
