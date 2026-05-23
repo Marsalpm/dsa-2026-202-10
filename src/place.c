@@ -91,7 +91,8 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
   printf("Escull una opció: ");
   int valid_number = scanf("%d", &opcio);
   while (valid_number != 1 || opcio < 0 || opcio > count) {
-    while (getchar() != '\n');
+    while (getchar() != '\n')
+      ;
     printf("Si us plau introdueixi un nombre vàlid: ");
     valid_number = scanf("%d", &opcio);
     if (0 < opcio && opcio <= count) {
@@ -99,9 +100,10 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
       for (int j = 1; j < opcio; j++)
         aux = aux->next;
       PlaceNode *final_res = findPlace(head, aux->name);
-      if (final_res != NULL){
-      printf("Trobat a (%f, %f)\n", final_res->place.lat, final_res->place.lon);
-      processLocation(final_res->place.lat, final_res->place.lon, streets);
+      if (final_res != NULL) {
+        printf("Trobat a (%f, %f)\n", final_res->place.lat,
+               final_res->place.lon);
+        processLocation(final_res->place.lat, final_res->place.lon, streets);
       }
     }
   }

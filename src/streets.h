@@ -1,8 +1,7 @@
 #ifndef STREETS_H
 #define STREETS_H
-
-
-typedef struct {
+typedef struct HashMap HashMap;
+typedef struct Street {
 
   long long id1;
 
@@ -37,5 +36,6 @@ void processLocation(double lat, double lon, StreetNode *streets);
 
 StreetNode *findClosestStreet(StreetNode *head, double userLat, double userLon);
 void printConnectedStreets(StreetNode *head, Street target);
+void printConnectedStreetsFast(HashMap *map, Street target);
 void processLocation(double lat, double lon, StreetNode *streets);
 #endif

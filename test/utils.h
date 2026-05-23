@@ -3,7 +3,6 @@
 #include "../src/houses.h"
 #include <stddef.h>
 
-
 typedef struct Leve {
   char name[100];
   int distance;

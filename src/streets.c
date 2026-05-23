@@ -1,9 +1,10 @@
 #include "streets.h"
+#include "intersection.map.h"
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #define EARTH_RADIUS 6371.0
 
@@ -29,15 +30,16 @@ StreetNode *loadStreets(char *filename) {
   return head;
 }
 
-StreetNode *addStreet(StreetNode *head, Street s) { //Afegir nodes a la llista
+StreetNode *addStreet(StreetNode *head, Street s) { // Afegir nodes a la llista
   StreetNode *newNode = malloc(sizeof(StreetNode));
-  if (!newNode) return head;
+  if (!newNode)
+    return head;
   newNode->street = s;
   newNode->next = head;
   return newNode;
 }
 
-void freeStreets(StreetNode *head) {  //Alliberem memoria
+void freeStreets(StreetNode *head) { // Alliberem memoria
   while (head != NULL) {
     StreetNode *temp = head;
     head = head->next;
@@ -45,9 +47,7 @@ void freeStreets(StreetNode *head) {  //Alliberem memoria
   }
 }
 
-double toRadians(double degree) {
-     return degree * M_PI / 180.0; 
-    }
+double toRadians(double degree) { return degree * M_PI / 180.0; }
 
 double haversine(double lat1, double lon1, double lat2, double lon2) {
   double dLat = toRadians(lat2 - lat1);
@@ -55,24 +55,30 @@ double haversine(double lat1, double lon1, double lat2, double lon2) {
   lat1 = toRadians(lat1);
   lat2 = toRadians(lat2);
 
-  double a = sin(dLat / 2) * sin(dLat / 2) + sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2);
+  double a = sin(dLat / 2) * sin(dLat / 2) +
+             sin(dLon / 2) * sin(dLon / 2) * cos(lat1) * cos(lat2);
   double c = 2 * atan2(sqrt(a), sqrt(1 - a));
 
   return EARTH_RADIUS * c;
 }
 
-StreetNode *findClosestStreet(StreetNode *head, double userLat,double userLon) {
+StreetNode *findClosestStreet(StreetNode *head, double userLat,
+                              double userLon) {
 
   StreetNode *current = head;
   StreetNode *closest = NULL;
-  double minDistance = 10000; //Distancia molt alta
-                            
-  while (current != NULL) { 
-    double midLat = (current->street.lat1 + current->street.lat2) / 2.0;  //Calculem punt mitjà del segment de carrer
+  double minDistance = 10000; // Distancia molt alta
+
+  while (current != NULL) {
+    double midLat = (current->street.lat1 + current->street.lat2) /
+                    2.0; // Calculem punt mitjà del segment de carrer
     double midLon = (current->street.lon1 + current->street.lon2) / 2.0;
-    double distance = haversine(userLat, userLon, midLat, midLon);        //Calculem la distancia de la persona al punt mitja
-   
-    if (distance < minDistance) { //Si es mes petit que el que teniem, actualitzem
+    double distance =
+        haversine(userLat, userLon, midLat,
+                  midLon); // Calculem la distancia de la persona al punt mitja
+
+    if (distance <
+        minDistance) { // Si es mes petit que el que teniem, actualitzem
       minDistance = distance;
       closest = current;
     }
@@ -93,7 +99,9 @@ void printConnectedStreets(StreetNode *head, Street target) {
   while (current != NULL) {
     Street s = current->street;
     bool connected = false;
-    if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 || s.id2 == target.id2) connected = true;
+    if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 ||
+        s.id2 == target.id2)
+      connected = true;
     if (connected && strcmp(s.name, target.name) != 0) {
       bool alreadyPrinted = false;
       for (int i = 0; i < printedCount; i++) {
@@ -113,6 +121,44 @@ void printConnectedStreets(StreetNode *head, Street target) {
   }
 }
 
+void printConnectedStreetsFast(HashMap *map, Street target) {
+  char printed[100][100];
+  int printedCount = 0;
+
+  printf("- %s\n", target.name);
+  printf("    Which is connected to:\n");
+
+  // Comprovem les dues interseccions del segment (id1 i id2)
+  long long ids[2] = {target.id1, target.id2};
+
+  for (int i = 0; i < 2; i++) {
+    HashEntry *entry = findIntersection(map, ids[i]);
+    if (entry == NULL)
+      continue;
+
+    StreetList *current = entry->streets;
+    while (current != NULL) {
+      Street s = current->street;
+
+      if (strcmp(s.name, target.name) != 0) {
+        bool alreadyPrinted = false;
+        for (int j = 0; j < printedCount; j++) {
+          if (strcmp(printed[j], s.name) == 0) {
+            alreadyPrinted = true;
+            break;
+          }
+        }
+        if (!alreadyPrinted) {
+          printf("     - %s\n", s.name);
+          strcpy(printed[printedCount], s.name);
+          printedCount++;
+        }
+      }
+      current = current->next;
+    }
+  }
+}
+
 void processLocation(double lat, double lon, StreetNode *streets) {
   StreetNode *closest = findClosestStreet(streets, lat, lon);
 
@@ -127,6 +173,12 @@ void processLocation(double lat, double lon, StreetNode *streets) {
 
   printf("\nFrom this street segment, you can go to:\n");
 
-  printConnectedStreets(streets, closest->street);
+  HashMap *graph = buildGraph(streets);
+  if (graph != NULL) {
+    printConnectedStreetsFast(graph, closest->street);
+    freeHashMap(graph);
+  } else {
+    // versió original si no hi ha memòria
+    printConnectedStreets(streets, closest->street);
+  }
 }
-

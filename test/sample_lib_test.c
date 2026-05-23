@@ -1,11 +1,11 @@
-#include "../src/sample_lib.h"
 #include "../src/houses.h"
+#include "../src/place.h"
+#include "../src/sample_lib.h"
 #include "../src/streets.h"
 #include "utils.h"
-#include "../src/place.h"
+#include <math.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <math.h>
 #include <string.h>
 
 void test_fact4() {
@@ -62,7 +62,7 @@ void test_minuscules_majuscules() {
   }
   successtest();
 }
- 
+
 void test_minuscules_ja_minuscules() {
   runningtest("test_minuscules_ja_minuscules");
   {
@@ -72,7 +72,7 @@ void test_minuscules_ja_minuscules() {
   }
   successtest();
 }
- 
+
 void test_minuscules_mixt() {
   runningtest("test_minuscules_mixt");
   {
@@ -82,7 +82,7 @@ void test_minuscules_mixt() {
   }
   successtest();
 }
- 
+
 void test_minuscules_buit() {
   runningtest("test_minuscules_buit");
   {
@@ -92,7 +92,7 @@ void test_minuscules_buit() {
   }
   successtest();
 }
- 
+
 void minuscules_test() {
   running("minuscules_test");
   {
@@ -103,40 +103,31 @@ void minuscules_test() {
   }
   success();
 }
- 
 
 void test_min3_primer() {
   runningtest("test_min3_primer_es_el_minim");
-  {
-    assertEqualsInt(min3(1, 2, 3), 1);
-  }
+  { assertEqualsInt(min3(1, 2, 3), 1); }
   successtest();
 }
- 
+
 void test_min3_segon() {
   runningtest("test_min3_segon_es_el_minim");
-  {
-    assertEqualsInt(min3(5, 2, 3), 2);
-  }
+  { assertEqualsInt(min3(5, 2, 3), 2); }
   successtest();
 }
- 
+
 void test_min3_tercer() {
   runningtest("test_min3_tercer_es_el_minim");
-  {
-    assertEqualsInt(min3(5, 4, 1), 1);
-  }
+  { assertEqualsInt(min3(5, 4, 1), 1); }
   successtest();
 }
- 
+
 void test_min3_iguals() {
   runningtest("test_min3_tots_iguals");
-  {
-    assertEqualsInt(min3(3, 3, 3), 3);
-  }
+  { assertEqualsInt(min3(3, 3, 3), 3); }
   successtest();
 }
- 
+
 void min3_test() {
   running("min3_test");
   {
@@ -147,48 +138,37 @@ void min3_test() {
   }
   success();
 }
- 
- 
+
 void test_levenshtein_identics() {
   runningtest("test_levenshtein_strings_identics");
-  {
-    assertEqualsInt(levenshteinDistance("carrer", "carrer"), 0);
-  }
+  { assertEqualsInt(levenshteinDistance("carrer", "carrer"), 0); }
   successtest();
 }
- 
+
 void test_levenshtein_un_caracter() {
   runningtest("test_levenshtein_un_caracter_diferent");
-  {
-    assertEqualsInt(levenshteinDistance("cat", "bat"), 1);
-  }
+  { assertEqualsInt(levenshteinDistance("cat", "bat"), 1); }
   successtest();
 }
- 
+
 void test_levenshtein_buit() {
   runningtest("test_levenshtein_string_buit");
-  {
-    assertEqualsInt(levenshteinDistance("", "abc"), 3);
-  }
+  { assertEqualsInt(levenshteinDistance("", "abc"), 3); }
   successtest();
 }
- 
+
 void test_levenshtein_insercio() {
   runningtest("test_levenshtein_insercio_caracter");
-  {
-    assertEqualsInt(levenshteinDistance("abc", "abcd"), 1);
-  }
+  { assertEqualsInt(levenshteinDistance("abc", "abcd"), 1); }
   successtest();
 }
- 
+
 void test_levenshtein_eliminacio() {
   runningtest("test_levenshtein_eliminacio_caracter");
-  {
-    assertEqualsInt(levenshteinDistance("abcd", "abc"), 1);
-  }
+  { assertEqualsInt(levenshteinDistance("abcd", "abc"), 1); }
   successtest();
 }
- 
+
 void levenshtein_test() {
   running("levenshtein_test");
   {
@@ -200,7 +180,7 @@ void levenshtein_test() {
   }
   success();
 }
- 
+
 void test_addHouse_llista_buida() {
   runningtest("test_addHouse_llista_buida");
   {
@@ -213,7 +193,7 @@ void test_addHouse_llista_buida() {
   }
   successtest();
 }
- 
+
 void test_addHouse_insercio_principi() {
   runningtest("test_addHouse_insercio_al_principi");
   {
@@ -228,7 +208,7 @@ void test_addHouse_insercio_principi() {
   }
   successtest();
 }
- 
+
 void test_findHouse_existeix() {
   runningtest("test_findHouse_casa_existent");
   {
@@ -243,7 +223,7 @@ void test_findHouse_existeix() {
   }
   successtest();
 }
- 
+
 void test_findHouse_case_insensitive() {
   runningtest("test_findHouse_case_insensitive");
   {
@@ -256,7 +236,7 @@ void test_findHouse_case_insensitive() {
   }
   successtest();
 }
- 
+
 void test_findHouse_numero_incorrecte() {
   runningtest("test_findHouse_numero_incorrecte_retorna_null");
   {
@@ -269,7 +249,7 @@ void test_findHouse_numero_incorrecte() {
   }
   successtest();
 }
- 
+
 void test_findHouse_carrer_inexistent() {
   runningtest("test_findHouse_carrer_inexistent_retorna_null");
   {
@@ -282,7 +262,7 @@ void test_findHouse_carrer_inexistent() {
   }
   successtest();
 }
- 
+
 void test_findHouse_llista_buida() {
   runningtest("test_findHouse_llista_buida_retorna_null");
   {
@@ -291,7 +271,7 @@ void test_findHouse_llista_buida() {
   }
   successtest();
 }
- 
+
 void houses_test() {
   running("houses_test");
   {
@@ -305,8 +285,7 @@ void houses_test() {
   }
   success();
 }
- 
- 
+
 void test_haversine_mateixa_posicio() {
   runningtest("test_haversine_mateixa_posicio_distancia_zero");
   {
@@ -318,7 +297,7 @@ void test_haversine_mateixa_posicio() {
   }
   successtest();
 }
- 
+
 void test_haversine_simetrica() {
   runningtest("test_haversine_distancia_simetrica");
   {
@@ -331,7 +310,7 @@ void test_haversine_simetrica() {
   }
   successtest();
 }
- 
+
 void test_haversine_bcn_madrid() {
   runningtest("test_haversine_barcelona_madrid_aprox_504km");
   {
@@ -343,7 +322,7 @@ void test_haversine_bcn_madrid() {
   }
   successtest();
 }
- 
+
 void haversine_test() {
   running("haversine_test");
   {
@@ -353,7 +332,6 @@ void haversine_test() {
   }
   success();
 }
- 
 
 void test_addSugestion_una_entrada() {
   runningtest("test_addSugestion_una_entrada");
@@ -366,7 +344,7 @@ void test_addSugestion_una_entrada() {
   }
   successtest();
 }
- 
+
 void test_addSugestion_ordre_distancia() {
   runningtest("test_addSugestion_ordenat_per_distancia");
   {
@@ -379,7 +357,7 @@ void test_addSugestion_ordre_distancia() {
   }
   successtest();
 }
- 
+
 void test_addSugestion_sense_duplicats() {
   runningtest("test_addSugestion_sense_duplicats");
   {
@@ -388,13 +366,16 @@ void test_addSugestion_sense_duplicats() {
     list = addSugestion(list, "Carrer Major", 2);
     int count = 0;
     Leve *aux = list;
-    while (aux) { count++; aux = aux->next; }
+    while (aux) {
+      count++;
+      aux = aux->next;
+    }
     assertEqualsInt(count, 1);
     freeSugestion(list);
   }
   successtest();
 }
- 
+
 void test_addSugestion_distancia_alta() {
   runningtest("test_addSugestion_distancia_mes_de_30_no_safegeix");
   {
@@ -416,21 +397,21 @@ void sugestion_test() {
   success();
 }
 
-void test_addPlace_llista_buida(){
+void test_addPlace_llista_buida() {
   runningtest("test_addPLace_llista_buida");
   {
-    Place p  = {"Parc Güell", 41.4145, 2.1527};
+    Place p = {"Parc Güell", 41.4145, 2.1527};
     PlaceNode *list = NULL;
-    list = addPlace(list,p);
+    list = addPlace(list, p);
     assertEquals(list->place.name, "Parc Güell");
     freePlaces(list);
   }
   successtest();
 }
 
-void test_addPlace_insercio_principi(){
-   runningtest("test_addPlace_insercio_principi");
-   {
+void test_addPlace_insercio_principi() {
+  runningtest("test_addPlace_insercio_principi");
+  {
     Place p1 = {"Parc Güell", 41.4145, 2.1527};
     Place p2 = {"Sagrada Familia", 41.4036, 2.1744};
     PlaceNode *list = NULL;
@@ -439,11 +420,11 @@ void test_addPlace_insercio_principi(){
     assertEquals(list->place.name, "Sagrada Familia");
     assertEquals(list->next->place.name, "Parc Güell");
     freePlaces(list);
-   }
-   successtest();
+  }
+  successtest();
 }
 
-void test_findPlace_existeix(){
+void test_findPlace_existeix() {
   runningtest("test_findPlace_lloc_existent");
   {
     Place p1 = {"Parc Güell", 41.4145, 2.1527};
@@ -458,7 +439,7 @@ void test_findPlace_existeix(){
   successtest();
 }
 
-void test_findPlace_case_insensitve(){
+void test_findPlace_case_insensitve() {
   runningtest("test_findPlace_case_insensitive");
   {
     Place p = {"Parc Guell", 41.4145, 2.1527};
@@ -471,8 +452,7 @@ void test_findPlace_case_insensitve(){
   successtest();
 }
 
-
-void test_findPlace_inexistent(){
+void test_findPlace_inexistent() {
   runningtest("test_findPlace_lloc_inexistent_restorna_null");
   {
     Place p = {"Parc Guell", 41.4145, 2.1527};
@@ -484,8 +464,8 @@ void test_findPlace_inexistent(){
   }
   successtest();
 }
- 
-void test_findPlace_llista_buida(){
+
+void test_findPlace_llista_buida() {
   runningtest("test_findPlace_llista_buida_retorna_nul");
   {
     PlaceNode *res = findPlace(NULL, "Parc Guell");
@@ -494,7 +474,7 @@ void test_findPlace_llista_buida(){
   successtest();
 }
 
-void place_test(){
+void place_test() {
   running("places_test");
   {
     test_addPlace_llista_buida();
@@ -509,45 +489,51 @@ void place_test(){
 
 void test_loadStreets_no_null() {
   runningtest("test_loadStreets_no_null");
-    {
-        StreetNode *list = loadStreets("maps/xs_1/streets.txt");   // Intentem carregar el mapa xs_1 
-        if (list != NULL) { // Comprovem que la llista no estigui buida
-            successtest();
-        } else {
-            fprintf(stderr, "    Error: No s'ha pogut carregar maps/xs_1/streets.txt\n");
-            assertEqualsInt(1, 0); // Fem que hi hagi error
-        }
-        freeStreets(list);
+  {
+    StreetNode *list =
+        loadStreets("maps/xs_1/streets.txt"); // Intentem carregar el mapa xs_1
+    if (list != NULL) { // Comprovem que la llista no estigui buida
+      successtest();
+    } else {
+      fprintf(stderr,
+              "    Error: No s'ha pogut carregar maps/xs_1/streets.txt\n");
+      assertEqualsInt(1, 0); // Fem que hi hagi error
     }
+    freeStreets(list);
+  }
 }
 
 void test_findClosestStreet_basic() {
-    runningtest("test_findClosestStreet_basic");
-    {
-        Street s = {1, 41.0, 2.0, 2, 41.2, 2.2, 1.0, "Carrer de Prova"};// Creem una llista amb un carrer per provar
-        StreetNode *list = NULL;
-        list = addStreet(list, s);
+  runningtest("test_findClosestStreet_basic");
+  {
+    Street s = {
+        1,    41.0,
+        2.0,  2,
+        41.2, 2.2,
+        1.0,  "Carrer de Prova"}; // Creem una llista amb un carrer per provar
+    StreetNode *list = NULL;
+    list = addStreet(list, s);
 
-        StreetNode *res = findClosestStreet(list, 41.11, 2.11); // Busquem el carrer més proper del midpoint 
-        
-        if (res != NULL && strcmp(res->street.name, "Carrer de Prova") == 0) {
-            successtest();
-        } else {
-            fprintf(stderr, "    Error: No s'ha trobat el carrer més proper correctament\n");
-            assertEqualsInt(1, 0);
-        }
-        freeStreets(list);
+    StreetNode *res = findClosestStreet(
+        list, 41.11, 2.11); // Busquem el carrer més proper del midpoint
+
+    if (res != NULL && strcmp(res->street.name, "Carrer de Prova") == 0) {
+      successtest();
+    } else {
+      fprintf(stderr,
+              "    Error: No s'ha trobat el carrer més proper correctament\n");
+      assertEqualsInt(1, 0);
     }
+    freeStreets(list);
+  }
 }
 
 // Aquesta ajunta els tests de carrers
 void streets_test() {
-    running("streets_test");
-    {
-        test_loadStreets_no_null();
-        test_findClosestStreet_basic();
-    }
-    success();
+  running("streets_test");
+  {
+    test_loadStreets_no_null();
+    test_findClosestStreet_basic();
+  }
+  success();
 }
-
-
