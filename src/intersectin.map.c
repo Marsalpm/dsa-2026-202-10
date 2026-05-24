@@ -24,8 +24,6 @@ HashMap *createHashMap() {
   return map;
 }
 
-
-
 void insertStreet(HashMap *map, Street s) {
 
   // Calculem en quina posició anirà aquest id
@@ -60,7 +58,7 @@ void insertStreet(HashMap *map, Street s) {
       entry->next = map->table[index];
       map->table[index] = entry;
     }
-   
+
     StreetList *newStreet = malloc(sizeof(StreetList));
 
     newStreet->street = s;
@@ -76,7 +74,7 @@ HashMap *buildGraph(StreetNode *streets) {
   HashMap *map = createHashMap();
 
   StreetNode *current = streets;
- // Recorrem tots els carrers
+  // Recorrem tots els carrers
   while (current != NULL) {
     // Inserim el carrer al hashmap
     insertStreet(map, current->street);
@@ -88,7 +86,7 @@ HashMap *buildGraph(StreetNode *streets) {
 }
 
 HashEntry *findIntersection(HashMap *map, long long id) {
-  //Calculem la posició  
+  // Calculem la posició
   int index = hash(id);
 
   HashEntry *entry = map->table[index];
