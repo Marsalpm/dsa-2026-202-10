@@ -22,7 +22,7 @@ HouseNode *loadHouses(char *filename) {
   FILE *file = fopen(filename, "r"); // Obrim el fitxer en mode lectura
 
   if (file == NULL) { // Comprovem si el fitxer s'ha obert correctament
-    printf("No s'ha pogut obrir el fitxer\n");
+    printf("Could not open the file\n");
     return NULL; // Si no existeix, retornem NULL
   }
 
@@ -66,15 +66,16 @@ HouseNode *findHouse(HouseNode *head, char *street, int number) {
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 // Fucnions auxilars:
-void printCoordinates(House house) {
-  printf("\nTrobat a (%f, %f)\n", house.lat,
+void printCoordinates(House house, double lat, double lon){
+  printf("\nFound at (%f, %f)\n", house.lat,
          house.lon); // Mostra les coordenades per pantalla
+  lat = house.lat;
+  lon = house.lon;
 }
 
 // Cerca un carrer gestionant abreviatures, números erronis i similituds
 // FUNCIO DE CERCA INTELIGENT LAB 2 I LAB 3:
-void cerca_inteligent_houses(HouseNode *head, char *street, int number,
-                             StreetNode *streets) {
+void cerca_inteligent_houses(HouseNode *head, char *street, int number, StreetNode *streets, double lat,double lon) {
   char final[100] = "";
   char street_net[100]; // Variable per guardar el nom del carrer "netejat"
 
@@ -95,12 +96,12 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
   // Busquem si la casa exacta existeix amb el nom netejat
   HouseNode *resultat = findHouse(head, street_net, number);
   if (resultat != NULL) {
-    printCoordinates(resultat->house);
+    printCoordinates(resultat->house, lat, lon);
     processLocation(resultat->house.lat, resultat->house.lon,
                     streets); // Si existeix, imprimim coordenades
     return;                   // Sortim de la funció
   } else
-    printf("No s'ha trobat la casa exacte a %s %d\n", street_net, number);
+    printf("Exact house not found at %s %d\n", street_net, number);
 
   // Si no hi és, busquem si almenys el carrer existeix per suggerir números
   HouseNode *temp = head;     // Punter temporal per recórrer la llista
@@ -117,7 +118,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
   if (street_trobat) {
     strcpy(final, street_net);
   } else {
-    printf("Carrers semblants a %s:\n", street_net);
+    printf("Similar streets to %s:\n", street_net);
     Leve *sugList = NULL;
     HouseNode *temp1 = head;
     while (temp1 != NULL) {
@@ -137,13 +138,13 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
     printf("0. Exit\n");
 
     int opcio;
-    printf("Escull una opcio: ");
+    printf("Choose an option: ");
     int valid_number = scanf("%d", &opcio);
     while (valid_number != 1 || opcio < 0 || opcio > count) {
       // vaciar el buffer
       while (getchar() != '\n')
         ;
-      printf("Si us plau introdueixi un nombre vàlid: ");
+      printf("Please enter a valid number: ");
       valid_number = scanf("%d", &opcio);
     }
 
@@ -159,7 +160,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
   }
 
   if (strlen(final) > 0) {
-    printf("Números vàlids disponibles al carrer %s:\n", final);
+    printf("Valid numbers available on street %s:\n", final);
     HouseNode *temp2 = head;
     int count2 = 0;
 
@@ -177,7 +178,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
       printf("|\n");
     printf("0. Exit\n");
     int finalnum;
-    printf("Escull el número: ");
+    printf("Choose the number: ");
     int valid_number = scanf("%d", &finalnum);
     HouseNode *res = findHouse(head, final, finalnum);
     if (finalnum == 0)
@@ -186,11 +187,11 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
       // vaciar el buffer
       while (getchar() != '\n')
         ;
-      printf("Si us plau introdueixi un nombre vàlid: ");
+      printf("Please enter a valid number: ");
       valid_number = scanf("%d", &finalnum);
       res = findHouse(head, final, finalnum);
       if (res != NULL && valid_number == 1) {
-        printCoordinates(res->house);
+        printCoordinates(res->house, lat, lon);
         processLocation(res->house.lat, res->house.lon, streets);
         return;
       }
@@ -198,7 +199,7 @@ void cerca_inteligent_houses(HouseNode *head, char *street, int number,
         return;
     }
     if (res != NULL) {
-      printCoordinates(res->house);
+      printCoordinates(res->house, lat, lon);
       processLocation(res->house.lat, res->house.lon, streets);
       return;
     }

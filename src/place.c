@@ -19,7 +19,7 @@ PlaceNode *loadPlaces(char *filename) {
   FILE *file = fopen(filename, "r");
 
   if (file == NULL) { // Comprovem si el fitxer s'ha obert correctament
-    printf("No s'ha pogut obrir el fitxer\n");
+    printf("Could not open the file\n");
     return NULL; // Si no existeix, retornem NULL
   }
 
@@ -52,16 +52,18 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 
-void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
+void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, double *lat, double *lon) {
   PlaceNode *resultat = findPlace(head, name);
   // Cerca exacta
   if (resultat != NULL) {
-    printf("Trobat a (%f, %f)\n", resultat->place.lat, resultat->place.lon);
+    printf("Found at (%f, %f)\n", resultat->place.lat, resultat->place.lon);
     processLocation(resultat->place.lat, resultat->place.lon, streets);
+    *lat=resultat->place.lat;
+    *lon=resultat->place.lon;
     return;
   }
   // Cerca d'opcions similars
-  printf("Lloc '%s' no trobat. Volies dir:\n", name);
+  printf("Place '%s' not found. Did you mean:\n", name);
 
   Leve *sugList = NULL;
   PlaceNode *temp = head;
@@ -82,18 +84,18 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
     count++;
   }
   if (count == 0) {
-    printf("No s'han trobat opcions semblants\n");
+    printf("No similar options found\n");
     return;
   }
   printf("0. Exit\n");
 
   int opcio;
-  printf("Escull una opció: ");
+  printf("Choose an option: ");
   int valid_number = scanf("%d", &opcio);
   while (valid_number != 1 || opcio < 0 || opcio > count) {
     while (getchar() != '\n')
       ;
-    printf("Si us plau introdueixi un nombre vàlid: ");
+    printf("Please enter a valid number: ");
     valid_number = scanf("%d", &opcio);
     if (0 < opcio && opcio <= count) {
       aux = sugList;
@@ -101,8 +103,9 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
         aux = aux->next;
       PlaceNode *final_res = findPlace(head, aux->name);
       if (final_res != NULL) {
-        printf("Trobat a (%f, %f)\n", final_res->place.lat,
-               final_res->place.lon);
+        printf("Found at (%f, %f)\n", final_res->place.lat,final_res->place.lon);
+        *lat=resultat->place.lat;
+        *lon=resultat->place.lon;
         processLocation(final_res->place.lat, final_res->place.lon, streets);
       }
     }
@@ -116,7 +119,9 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets) {
       aux = aux->next;
     PlaceNode *final_res = findPlace(head, aux->name);
     if (final_res != NULL) {
-      printf("Trobat a (%f, %f)\n", final_res->place.lat, final_res->place.lon);
+      printf("Found at (%f, %f)\n", final_res->place.lat, final_res->place.lon);
+      *lat=resultat->place.lat;
+      *lon=resultat->place.lon;
       processLocation(final_res->place.lat, final_res->place.lon, streets);
     }
   }

@@ -11,7 +11,7 @@
 StreetNode *loadStreets(char *filename) {
   FILE *file = fopen(filename, "r");
   if (file == NULL) {
-    printf("No s'ha pogut obrir streets.txt\n");
+    printf("Could not open streets.txt\n");
     return NULL;
   }
 
