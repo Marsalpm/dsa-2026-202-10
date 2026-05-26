@@ -52,15 +52,15 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 
-void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, double *lat, double *lon) {
+int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, double *lat, double *lon, int showConnection) {
   PlaceNode *resultat = findPlace(head, name);
   // Cerca exacta
   if (resultat != NULL) {
-    printf("Found at (%f, %f)\n", resultat->place.lat, resultat->place.lon);
-    processLocation(resultat->place.lat, resultat->place.lon, streets);
+    printf("\nFound at (%f, %f)\n", resultat->place.lat, resultat->place.lon);
+    processLocation(resultat->place.lat, resultat->place.lon, streets, showConnection);
     *lat=resultat->place.lat;
     *lon=resultat->place.lon;
-    return;
+    return 1;
   }
   // Cerca d'opcions similars
   printf("Place '%s' not found. Did you mean:\n", name);
@@ -85,7 +85,7 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, d
   }
   if (count == 0) {
     printf("No similar options found\n");
-    return;
+    return 0;
   }
   printf("0. Exit\n");
 
@@ -103,29 +103,30 @@ void cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, d
         aux = aux->next;
       PlaceNode *final_res = findPlace(head, aux->name);
       if (final_res != NULL) {
-        printf("Found at (%f, %f)\n", final_res->place.lat,final_res->place.lon);
-        *lat=resultat->place.lat;
-        *lon=resultat->place.lon;
-        processLocation(final_res->place.lat, final_res->place.lon, streets);
+        printf("\nFound at (%f, %f)\n", final_res->place.lat,final_res->place.lon);
+        *lat=final_res->place.lat;
+        *lon=final_res->place.lon;
+        processLocation(final_res->place.lat, final_res->place.lon, streets, showConnection);
       }
     }
   }
   if (opcio == 0) {
     freeSugestion(sugList);
-    return;
+    return 0;
   } else if (0 < opcio && opcio <= count) {
     aux = sugList;
     for (int j = 1; j < opcio; j++)
       aux = aux->next;
     PlaceNode *final_res = findPlace(head, aux->name);
     if (final_res != NULL) {
-      printf("Found at (%f, %f)\n", final_res->place.lat, final_res->place.lon);
-      *lat=resultat->place.lat;
-      *lon=resultat->place.lon;
-      processLocation(final_res->place.lat, final_res->place.lon, streets);
+      printf("\nFound at (%f, %f)\n", final_res->place.lat, final_res->place.lon);
+      *lat=final_res->place.lat;
+      *lon=final_res->place.lon;
+      processLocation(final_res->place.lat, final_res->place.lon, streets, showConnection);
     }
   }
   freeSugestion(sugList);
+  return 1;
 }
 
 void freePlaces(PlaceNode *head) {

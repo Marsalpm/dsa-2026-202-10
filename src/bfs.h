@@ -1,16 +1,18 @@
 #ifndef BFS_H
 #define BFS_H
 #define EARTH_RADIUS 6371.0
+#include "streets.h"
+#include "intersection.map.h"
 typedef struct Street Street;
 
 typedef struct PathNode{
     Street street;
-    PathNode *next;
+    struct PathNode *next;
 } PathNode;
 
 typedef struct QueueItem{
     PathNode *path;
-    QueueItem *next;
+    struct QueueItem *next;
 } QueueItem;
 
 typedef struct  Queue{
@@ -35,6 +37,7 @@ PathNode* pathAppend(PathNode *p, Street street);
 PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet);
 int isVisited(VisitedNode *visited, long long id1, long long id2);
 void freeVisited(VisitedNode *visited);
+VisitedNode* addVisited(VisitedNode *visited, long long id1, long long id2);
 void printRoute(PathNode *path);
 void latlon_to_xy(double lat_ref, double lon_ref,
 double lat, double lon, double *x, double *y);
