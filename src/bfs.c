@@ -124,6 +124,7 @@ PathNode* pathCopy(PathNode *p){
 }
 
 // Cerca en amplada (BFS) per trobar el camí més curt
+// Utilitza un Hash Set per als visitats (O(1) amortitzat en lloc d'O(n))
 PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
     Queue *q = createQueue(); // Creem la cua per al BFS
     
@@ -133,7 +134,7 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
     initial->next = NULL;
     enqueue(q, initial); // L'encuem com a punt de partida
     
-    VisitedNode *visited = NULL; // Llista d'interseccions visitades
+    VisitedSet *visited = createVisitedSet(); // Hash Set de segments visitats
     
     // Mentre hi hagi camins per explorar a la cua
     while (queueisEmpty(q)!=1){
@@ -147,15 +148,15 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
         
         // Si hem arribat al carrer de destí
         if(toStreet.id1==temp->street.id1 && toStreet.id2==temp->street.id2){
-            freeVisited(visited); // Alliberem la memòria dels visitats
-            queuefree(q);         // Alliberem la cua
-            return current;       // Retornem el camí trobat
+            freeVisitedSet(visited); // Alliberem la memòria del hash set
+            queuefree(q);            // Alliberem la cua
+            return current;          // Retornem el camí trobat
         }
         
         // Si el carrer actual (les seves interseccions) encara no s'ha visitat
-        if(isVisited(visited,temp->street.id1,temp->street.id2)==0){
+        if(isVisitedSet(visited,temp->street.id1,temp->street.id2)==0){
             // El marquem com a visitat
-            visited=addVisited(visited,temp->street.id1,temp->street.id2);
+            addVisitedSet(visited,temp->street.id1,temp->street.id2);
             
             // Busquem a quins carrers podem anar des de l'extrem (id2) del carrer actual
             HashEntry *entry = findIntersection(graph, temp->street.id2);
@@ -166,7 +167,7 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
                 // Iterem per tots els carrers connectats
                 while(connected != NULL){
                     // Si el carrer connectat no ha estat visitat
-                    if(isVisited(visited, connected->street.id1, connected->street.id2)==0){
+                    if(isVisitedSet(visited, connected->street.id1, connected->street.id2)==0){
                         // Creem un nou camí afegint el carrer connectat
                         PathNode *newPath = pathAppend(current, connected->street);
                         enqueue(q, newPath); // L'encuem per explorar-lo més endavant
@@ -178,7 +179,7 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
     }
     
     // Si hem buidat la cua i no hem trobat res, alliberem recursos
-    freeVisited(visited);
+    freeVisitedSet(visited);
     queuefree(q);
     return NULL; // Retornem NULL perquè no hi ha camí
 }
@@ -211,6 +212,58 @@ void freeVisited(VisitedNode *visited){
         visited = visited->next;     // Avancem
         free(temp);                  // Alliberem l'actual
     }
+}
+
+
+// Funció de hash que combina id1 i id2 en un sol índex
+static unsigned int visitedHash(long long id1, long long id2) {
+    unsigned long long combined = (unsigned long long)id1 * 2654435761ULL ^ (unsigned long long)id2;
+    return (unsigned int)(combined % VISITED_TABLE_SIZE);
+}
+
+// Crea un VisitedSet buit amb tots els buckets a NULL
+VisitedSet *createVisitedSet() {
+    VisitedSet *set = malloc(sizeof(VisitedSet));
+    if (set == NULL) return NULL;
+    for (int i = 0; i < VISITED_TABLE_SIZE; i++) {
+        set->table[i] = NULL;
+    }
+    return set;
+}
+
+// Comprova si un segment (id1, id2) ja està dins el hash set
+int isVisitedSet(VisitedSet *set, long long id1, long long id2) {
+    unsigned int index = visitedHash(id1, id2);
+    VisitedEntry *entry = set->table[index];
+    // Recorrem el bucket (normalment molt curt)
+    while (entry != NULL) {
+        if (entry->id1 == id1 && entry->id2 == id2) return 1;
+        entry = entry->next;
+    }
+    return 0;
+}
+
+// Afegeix un segment (id1, id2) al hash set
+void addVisitedSet(VisitedSet *set, long long id1, long long id2) {
+    unsigned int index = visitedHash(id1, id2);
+    VisitedEntry *newEntry = malloc(sizeof(VisitedEntry));
+    newEntry->id1 = id1;
+    newEntry->id2 = id2;
+    newEntry->next = set->table[index]; // Inserim al principi del bucket
+    set->table[index] = newEntry;
+}
+
+// Allibera tota la memòria del hash set
+void freeVisitedSet(VisitedSet *set) {
+    for (int i = 0; i < VISITED_TABLE_SIZE; i++) {
+        VisitedEntry *entry = set->table[i];
+        while (entry != NULL) {
+            VisitedEntry *temp = entry;
+            entry = entry->next;
+            free(temp);
+        }
+    }
+    free(set);
 }
 
 // Converteix coordenades (lat, lon) a coordenades cartesianes (x, y) per calcular distàncies i angles

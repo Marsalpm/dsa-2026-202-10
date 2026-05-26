@@ -254,7 +254,7 @@ int main() {
   }
   freeHashMap(graph);
   freeStreets(streets);
-  freeHouses(houses);
+  freeHouses(houses);x
   freePlaces(places);
   return 0;
 }
