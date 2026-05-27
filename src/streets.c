@@ -23,7 +23,7 @@ StreetNode *loadStreets(char *filename) {
     if (sscanf(line, "%lld,%lf,%lf,%lld,%lf,%lf,%lf, %99[^\n]", &s.id1, &s.lat1,
                &s.lon1, &s.id2, &s.lat2, &s.lon2, &s.length, s.name) == 8) {
         if(s.name[0] == ' '){
-        memmove(s.name, s.name+1, strlen(s.name));
+        memmove(s.name, s.name+1, strlen(s.name)+1);
     }
       s.name[strcspn(s.name, "\r\n")] = '\0';
       head = addStreet(head, s);

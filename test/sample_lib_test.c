@@ -2,11 +2,14 @@
 #include "../src/place.h"
 #include "../src/sample_lib.h"
 #include "../src/streets.h"
+#include "../src/bfs.h"
+#include "../src/intersection.map.h"
 #include "utils.h"
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void test_fact4() {
   runningtest("test_fact4");
@@ -528,12 +531,249 @@ void test_findClosestStreet_basic() {
   }
 }
 
+//Comprovar que inserir el primer carrer funciona
+void test_addStreet_llista_buida(){ 
+  runningtest("test_addStreet_llista_buida");
+  {
+    Street s = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Carrer Test"};
+    StreetNode *list = NULL;
+
+    list = addStreet(list, s);
+    assertEquals(list->street.name, "Carrer Test");
+    assertEqualsInt(list->street.id1,1);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+//Comprovar que els nous nodes entrel al principi
+void test_addStreet_insercio_principi(){
+  runningtest("test_addStreet_insercio_principi");
+    {
+      Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Primer"};
+      Street s2 = {3, 41.2, 2.2, 4, 41.3, 2.3, 200, "Segon"};
+
+      StreetNode *list = NULL;
+      list = addStreet(list, s1);
+      list = addStreet(list, s2);
+
+      assertEquals(list->street.name, "Segon");
+      assertEquals(list->next->street.name, "Primer");
+
+      freeStreets(list);
+    }
+  successtest();
+}
+
+//Comprovar que tria el carrer correcte
+void test_findClosestStreet_mes_proper(){
+  runningtest("test_findClosestStreet_mes_proper");
+    {
+      Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Lluny"};
+      Street s2 = {3, 41.4, 2.1, 4, 41.41, 2.11, 100, "Proper"};
+
+      StreetNode *list = NULL;
+      list = addStreet(list, s1);
+      list = addStreet(list, s2);
+
+      StreetNode *res = findClosestStreet(list, 41.405, 2.105);
+
+      assertEquals(res->street.name, "Proper");
+
+      freeStreets(list);
+    }
+  successtest();
+}
+
 // Aquesta ajunta els tests de carrers
 void streets_test() {
   running("streets_test");
   {
     test_loadStreets_no_null();
     test_findClosestStreet_basic();
+    test_addStreet_llista_buida();
+    test_addStreet_insercio_principi();
+    test_findClosestStreet_mes_proper();
   }
   success();
+}
+
+
+void test_buildGraph_no_null(){
+  runningtest("test_buildGraph_no_null");
+    {
+      Street s = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Test"};
+
+      StreetNode *list = NULL;
+      list = addStreet(list, s);
+
+      HashMap *graph = buildGraph(list);
+
+      if(graph == NULL) {
+       assertEqualsInt(1, 0);
+      }
+
+      freeHashMap(graph);
+      freeStreets(list);
+    }
+  successtest();
+}
+
+void test_findIntersection_existeix(){
+runningtest("test_findIntersection_existeix");
+  {
+    Street s = {10, 41.0, 2.0, 20, 41.1, 2.1, 100, "Test"};
+
+    StreetNode *list = NULL;
+    list = addStreet(list, s);
+
+    HashMap *graph = buildGraph(list);
+
+    HashEntry *entry = findIntersection(graph, 10);
+
+    if(entry == NULL) {
+      assertEqualsInt(1, 0);
+    }
+
+    freeHashMap(graph);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+void test_findIntersection_inexistent(){
+runningtest("test_findIntersection_inexistent");
+  {
+    Street s = {10, 41.0, 2.0, 20, 41.1, 2.1, 100, "Test"};
+
+    StreetNode *list = NULL;
+    list = addStreet(list, s);
+
+    HashMap *graph = buildGraph(list);
+
+    HashEntry *entry = findIntersection(graph, 9999);
+
+    assertNull(entry);
+
+    freeHashMap(graph);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+
+void intersection_test(){
+  running("intersection_test");
+  {
+    test_buildGraph_no_null();
+    test_findIntersection_existeix();
+    test_findIntersection_inexistent();
+  }
+  success();
+}
+
+void test_queue_enqueue_dequeue(){
+  runningtest("test_queue_enqueue_dequeue");
+  {
+    Queue *q = createQueue();
+
+    Street s = {1, 0,0,2,0,0,10,"Test"};
+
+    PathNode *p = malloc(sizeof(PathNode));
+    p->street = s;
+    p->next = NULL;
+
+    enqueue(q, p);
+
+    PathNode *res = dequeue(q);
+
+    assertEquals(res->street.name, "Test");
+
+    pathfree(res);
+    free(q);
+  }
+  successtest();
+}
+
+void test_queue_buida(){
+ runningtest("test_queue_buida");
+ {
+  Queue *q = createQueue();
+
+  assertEqualsInt(queueisEmpty(q), 1);
+
+  free(q);
+ }
+ successtest();
+}
+
+void test_pathCopy(){
+  runningtest("test_pathCopy");
+  {
+    Street s = {1,0,0,2,0,0,10,"Test"};
+
+    PathNode *p = malloc(sizeof(PathNode));
+    p->street = s;
+    p->next = NULL;
+
+    PathNode *copy = pathCopy(p);
+
+    assertEquals(copy->street.name, "Test");
+
+    pathfree(p);
+    pathfree(copy);
+  }
+  successtest();
+}
+
+void test_visitedSet(){
+  runningtest("test_visitedSet");
+  {
+    VisitedSet *set = createVisitedSet();
+
+    addVisitedSet(set, 1, 2);
+
+    assertEqualsInt(isVisitedSet(set, 1, 2), 1);
+    assertEqualsInt(isVisitedSet(set, 5, 6), 0);
+
+    freeVisitedSet(set);
+  }
+  successtest();
+}
+
+void test_bfs_troba_cami(){
+  runningtest("test_bfs_troba_cami");
+  {
+    Street s1 = {1,0,0,2,0,0,10,"A"};
+    Street s2 = {2,0,0,3,0,0,10,"B"};
+
+    StreetNode *list = NULL;
+    list = addStreet(list, s1);
+    list = addStreet(list, s2);
+
+    HashMap *graph = buildGraph(list);
+
+    PathNode *path = bfs(graph, s1, s2);
+
+    if(path == NULL) {
+      assertEqualsInt(1, 0);
+    }
+
+    pathfree(path);
+    freeHashMap(graph);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+void bfs_test(){
+  running("bfs_test");
+  {
+    test_queue_enqueue_dequeue();
+    test_queue_buida();
+    test_pathCopy();
+    test_visitedSet();
+    test_bfs_troba_cami();
+  }
+    success();
 }

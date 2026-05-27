@@ -13,6 +13,8 @@ int main() {
     sugestion_test();
     place_test();
     streets_test();
+    intersection_test();
+    bfs_test();
   }
   allsuccess();
 }
