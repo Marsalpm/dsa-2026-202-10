@@ -12,6 +12,7 @@ typedef struct PathNode{
 
 typedef struct QueueItem{
     PathNode *path;
+    long long current_intersection;
     struct QueueItem *next;
 } QueueItem;
 
@@ -43,8 +44,8 @@ typedef struct VisitedSet {
 
 Queue* createQueue();
 int queueisEmpty(Queue *queue);
-void enqueue(Queue *q, PathNode *p);
-PathNode* dequeue(Queue *q);
+void enqueue(Queue *q, PathNode *p, long long current_intersection);
+PathNode* dequeue(Queue *q, long long *current_intersection);
 void queuefree(Queue *q);
 void pathfree(PathNode *p);
 PathNode* pathCopy(PathNode *p);

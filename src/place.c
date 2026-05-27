@@ -107,6 +107,7 @@ int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, do
         *lat=final_res->place.lat;
         *lon=final_res->place.lon;
         processLocation(final_res->place.lat, final_res->place.lon, streets, showConnection);
+        return 1;
       }
     }
   }

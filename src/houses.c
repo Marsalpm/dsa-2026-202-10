@@ -81,12 +81,12 @@ int cerca_inteligent_houses(HouseNode *head, char *street, int number, StreetNod
 
   // Si comença per "C. ", ho expandim a "Carrer "
   if (strncasecmp(street, "C. ", 3) == 0) {
-    sprintf(street_net, "Carrer %s",
+    snprintf(street_net, sizeof(street_net), "Carrer %s",
             street + 3); // Saltem els 3 primers caràcters
   }
   // Si comença per "Av. ", ho expandim a "Avinguda "
   else if (strncasecmp(street, "Av. ", 4) == 0) {
-    sprintf(street_net, "Avinguda %s",
+    snprintf(street_net, sizeof(street_net), "Avinguda %s",
             street + 4); // Saltem els 4 primers caràcters
   } else {
     strcpy(street_net,

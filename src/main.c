@@ -136,9 +136,23 @@ int main() {
       while(dist > 10.0) {
           printf("Coordinates out of range, please try again\n");
           printf("Lat: ");
-          scanf("%lf", &initial_lat);
+          valid_number = scanf("%lf", &initial_lat);
+          while (valid_number != 1) {
+            // buidar el buffer
+            while (getchar() != '\n')
+              ;
+            printf("Enter a valid number: ");
+            valid_number = scanf("%lf", &initial_lat);
+          }
           printf("Lon: ");
-          scanf("%lf", &initial_lon);
+          valid_number = scanf("%lf", &initial_lon);
+          while (valid_number != 1) {
+            // buidar el buffer
+            while (getchar() != '\n')
+              ;
+            printf("Enter a valid number: ");
+            valid_number = scanf("%lf", &initial_lon);
+          }
           closest = findClosestStreet(streets, initial_lat, initial_lon);
           dist = haversine(initial_lat, initial_lon, closest->street.lat1, closest->street.lon1);
       }

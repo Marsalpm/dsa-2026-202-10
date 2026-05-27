@@ -106,7 +106,7 @@ void printConnectedStreets(StreetNode *head, Street target) {
     if (s.id1 == target.id1 || s.id1 == target.id2 || s.id2 == target.id1 ||
         s.id2 == target.id2)
       connected = true;
-    if (connected && strcmp(s.name, target.name) != 0) {
+    if (connected && (s.id1 != target.id1 || s.id2 != target.id2)) {
       bool alreadyPrinted = false;
       for (int i = 0; i < printedCount; i++) {
         if (strcmp(printed[i], s.name) == 0) {
@@ -140,7 +140,7 @@ int printConnectedStreetsFast(HashMap *map, Street target) {
     StreetList *current = entry->streets;
     while (current != NULL) {
       Street s = current->street;
-      if (strcmp(s.name, target.name) != 0) {
+      if (s.id1 != target.id1 || s.id2 != target.id2) {
         bool alreadyPrinted = false;
         for (int j = 0; j < printedCount; j++) {
           if (strcmp(printed[j], s.name) == 0) {
