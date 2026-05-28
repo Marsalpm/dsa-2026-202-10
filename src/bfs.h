@@ -59,6 +59,7 @@ int isVisitedSet(VisitedSet *set, long long id1, long long id2);
 void addVisitedSet(VisitedSet *set, long long id1, long long id2);
 void freeVisitedSet(VisitedSet *set);
 void printRoute(PathNode *path);
-void latlon_to_xy(double lat_ref, double lon_ref,
-double lat, double lon, double *x, double *y);
+void latlon_to_xy(double lat_ref, double lon_ref, double lat, double lon, double *x, double *y);
+StreetNode *findConnectedLinear (StreetNode *streets, long long intersection);
+PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet);
 #endif

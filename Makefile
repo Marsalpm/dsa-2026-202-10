@@ -1,4 +1,4 @@
-SRC_FILES := $(filter-out src/main.c, $(wildcard src/*.c))
+SRC_FILES := $(filter-out src/main.c src/temps.c src/temps_path.c, $(wildcard src/*.c))
 
 compile:
 	gcc -Wall -Wextra -Werror -Itest src/main.c $(SRC_FILES) test/utils.c -o main.out -lm	

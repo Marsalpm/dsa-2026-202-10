@@ -201,6 +201,15 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
     return NULL; // No hi ha camí
 }
 
+//Funció per a que sempre posi el numero petit primer
+void normalize(long long *a, long long *b){
+    if(*a > *b){
+        long long tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
+
 // Comprova si un carrer (definit pels seus IDs) ja ha estat visitat
 int isVisited(VisitedNode *visited, long long id1, long long id2){
     // Recorrem la llista de visitats
@@ -250,6 +259,7 @@ VisitedSet *createVisitedSet() {
 
 // Comprova si un segment (id1, id2) ja està dins el hash set
 int isVisitedSet(VisitedSet *set, long long id1, long long id2) {
+    normalize(&id1, &id2);
     unsigned int index = visitedHash(id1, id2);
     VisitedEntry *entry = set->table[index];
     // Recorrem el bucket (normalment molt curt)
@@ -262,6 +272,7 @@ int isVisitedSet(VisitedSet *set, long long id1, long long id2) {
 
 // Afegeix un segment (id1, id2) al hash set
 void addVisitedSet(VisitedSet *set, long long id1, long long id2) {
+    normalize(&id1, &id2);
     unsigned int index = visitedHash(id1, id2);
     VisitedEntry *newEntry = malloc(sizeof(VisitedEntry));
     newEntry->id1 = id1;
@@ -284,9 +295,7 @@ void freeVisitedSet(VisitedSet *set) {
 }
 
 // Converteix coordenades (lat, lon) a coordenades cartesianes (x, y) per calcular distàncies i angles
-void latlon_to_xy(double lat_ref, double lon_ref,
-                  double lat, double lon,
-                  double *x, double *y) {
+void latlon_to_xy(double lat_ref, double lon_ref, double lat, double lon, double *x, double *y) {
     double lat_ref_rad = toRadians(lat_ref);    // Latitud de referència en radians
     double dlat = toRadians(lat - lat_ref);     // Diferència de latitud
     double dlon = toRadians(lon - lon_ref);     // Diferència de longitud
@@ -371,4 +380,82 @@ void printRoute(PathNode *path){
     // Avís d'arribada al destí
     printf("Turn to %s for %dm\n", current->street.name, (int)distance);
     printf("You have arrived to your destination\n");
+}
+
+//Busca carrers connectats fent cerca lineal per tota la llista
+StreetNode *findConnectedLinear (StreetNode *streets, long long intersection){
+        StreetNode *result = NULL; //Nova llista carrers connectats trobats
+
+        while(streets != NULL){ //Recorre tota la llista de carrers 
+           if (streets->street.id1 == intersection ||
+            streets->street.id2 == intersection) { //Si carrer actual toca aquella intersecció (id1 o id2)
+
+            StreetNode *newNode = malloc(sizeof(StreetNode));   //Reservem memòria per guardar un nou node  
+            newNode->street = streets->street;  //Creem copia del carrer trobat
+            newNode->next = result; ///Connecta el nou node amb la llista resultat (s'insereix al principi)
+            result = newNode; // Actualitzem el cap de la llista i ara el nou node es a la primera posició
+        }
+        streets = streets->next; // Avança al seguent carrer de la llista original
+    }
+    return result; // Retorna nova llista de carrers connectats trobats
+    }
+
+
+    // BFS amb cerca lineal
+PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
+
+    Queue *q = createQueue();   //Crea cua que guardara camins pendents d'explorar
+    VisitedSet *visited = createVisitedSet();   //Crea el hash de segments visitats (no repetir carrers i evitar bucles)
+
+    addVisitedSet(visited, fromStreet.id1, fromStreet.id2); //Marca que s'ha visitat el carrer inicial 
+
+    PathNode *initial = malloc(sizeof(PathNode));   //Crea el primer node del cami
+    initial->street = fromStreet;   //Guardem carrer inicial
+    initial->next = NULL;   //El camí només té un carrer de moment
+
+    enqueue(q, initial, fromStreet.id2);    //Cami inicial a la cua i guardem intersecció de sortida
+
+    while (queueisEmpty(q) != 1) {  //Mentres hi hagin camins a explorar
+
+        long long exit_intersection;    
+        PathNode *current = dequeue(q, &exit_intersection); //Treu el seguent cami de la cua i recuperem interseccio de on sortim
+        PathNode *temp = current;   //Busquem ultim carrer del cami
+        while (temp->next != NULL) {    //Busquem ultim carrer del cami
+            temp = temp->next;
+        }
+        
+        if (toStreet.id1 == temp->street.id1 && toStreet.id2 == temp->street.id2) { //Comprova si hem arribat al destí, si és aixi
+            freeVisitedSet(visited); //Alliberem memoria
+            queuefree(q);   //Alliberem memoria
+            return current; //Retornem cami trobat
+        }
+
+        StreetNode *connected = findConnectedLinear(streets, exit_intersection);    //Mirem carrers connectats a la intersecció
+        StreetNode *aux = connected; //Auxiliar per recorrer els carrers conectats
+         
+        while (aux != NULL) {   //Recorre tots els carrers connectats trobats
+
+            Street s = aux->street; //Guardem el carrer actual
+            if (isVisitedSet(visited, s.id1, s.id2) == 0) { //Comprova si encara no hem visitat aquell segment
+
+                addVisitedSet(visited, s.id1, s.id2);   //Marca el segment com visitat
+                 long long next_exit = (s.id1 == exit_intersection) ? s.id2 : s.id1;    //Calacuem per quina intersecció sortirem despres
+                PathNode *newPath = pathAppend(current, s); //Crea nou cami copiant el cami actual i afegint el nou carrer
+                enqueue(q, newPath, next_exit); //Posa el nou cami a la cua
+            }
+
+            aux = aux->next;    //Seguent
+        }
+
+        while (connected != NULL) { //Alliberem llista temporal creada
+            StreetNode *tmp = connected;
+            connected = connected->next;
+            free(tmp);  
+        }
+        pathfree(current);  //Alliberem cami actual perque ja l'hem exportat
+    }
+    //Si no troba el cami allibera memoria i retorna null
+    freeVisitedSet(visited);
+    queuefree(q);
+    return NULL;
 }

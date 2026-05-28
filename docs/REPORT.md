@@ -46,16 +46,25 @@ En la nostre implementació hi ha un sobrecost adicional ja que cada cop que exp
 
 
 ## A plot comparing the latency to find connected streets by sequentially looking through the list (lab 4) compared to using the intersections map (lab 5), depending on the map size. Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results.
-| Map  |  LS (s)  |  HM (s)  |
-| xs_1 | 0.000132 | 0.000035 |
-| xs_2 | 0.000058 | 0.000024 |
-| md_1 | 0.000092 | 0.000031 |
-| lg_1 | 0.000690 | 0.000051 |
-| xl_1 | 0.000179 | 0.000032 |
-| 2xl_1| 0.000617 | 0.000046 |
-Podem veure que la versió del LAB 4 (Lineal Search) normalment triga més que la del LAB 5 (HashMap) i més quan el fitxer és més gran. Això passa perque la cerca lineal ha de recòrrer tots els carrers fins a trobar quins estan connectats mentre que el hashmappot anar directament a la intersecció que busquem i obtenir els carrers conectats molt més ràpid.
-![Grpah](graficReport.png)
+| Map  ||     LS (ms)       | T (ms)||     HM (ms)       | T(ms) |
+| xs_1 || 0.165 0.043 0.188 | 0.132 || 0.086 0.014 0.005 | 0.035 |
+| xs_2 || 0.039 0.068 0.067 | 0.058 || 0.014 0.029 0.031 | 0.024 |
+| md_1 || 0.043 0.098 0.137 | 0.092 || 0.015 0.024 0.054 | 0.031 |
+| lg_1 || 0.073 0.077 0.059 | 0.690 || 0.087 0.043 0.023 | 0.051 |
+| xl_1 || 0.161 0.244 0.152 | 0.179 || 0.034 0.029 0.033 | 0.032 |
+| 2xl_1|| 0.492 0.845 0.516 | 0.617 || 0.049 0.044 0.047 | 0.046 |
+
+Podem veure que la versió del LAB 4 (Lineal Search) normalment triga més que la del LAB 5 (HashMap) i més quan el fitxer és més gran. Això passa perque la cerca lineal ha de recòrrer tots els carrers fins a trobar quins estan connectats mentre que el hashmappot anar directament a la intersecció que busquem i obtenir els carrers conectats molt més ràpid. Tot això comentat és els partats anteriors posats en pràctica, on LS el pitjor cas és O(n^2) i a HS és O(n).
+
+![Graph](graficReport.png)
 
 
 
 ## A plot comparing the latency to find a path between two points finding connected streets sequentially looking through the list compared to using the intersections map, depending on the map size (but keeping the same origin and destination). Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results.
+| Map  ||  BFS Slow (ms)    | T (ms)||  BFS Fast (ms)    | T(ms) |
+| xs_1 || 0.165 0.043 0.188 | 0.132 || 0.086 0.014 0.005 | 0.035 |
+| xs_2 || 0.039 0.068 0.067 | 0.058 || 0.014 0.029 0.031 | 0.024 |
+| md_1 || 0.043 0.098 0.137 | 0.092 || 0.015 0.024 0.054 | 0.031 |
+| lg_1 || 0.073 0.077 0.059 | 0.690 || 0.087 0.043 0.023 | 0.051 |
+| xl_1 || 0.161 0.244 0.152 | 0.179 || 0.034 0.029 0.033 | 0.032 |
+| 2xl_1|| 0.492 0.845 0.516 | 0.617 || 0.049 0.044 0.047 | 0.046 |
