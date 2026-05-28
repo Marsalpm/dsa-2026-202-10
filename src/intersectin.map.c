@@ -59,13 +59,28 @@ void insertStreet(HashMap *map, Street s) {
       map->table[index] = entry;
     }
 
-    // Creem un nou node per afegir el carrer a la intersecció
-    StreetList *newStreet = malloc(sizeof(StreetList));
-    newStreet->street = s; // Guardem el carrer en el node
+// Creem un nou node per afegir el carrer
+StreetList *newStreet = malloc(sizeof(StreetList));
+newStreet->street = s;
+newStreet->next = NULL;
 
-    // L'inserim al principi de la llista de carrers d'aquella intersecció
-    newStreet->next = entry->streets;
+// Si no hi ha cap carrer encara, serà el primer
+if (entry->streets == NULL) {
+
     entry->streets = newStreet;
+}
+else {
+
+    // Busquem l'últim carrer de la llista
+    StreetList *currentStreet = entry->streets;
+
+    while (currentStreet->next != NULL) {
+        currentStreet = currentStreet->next;
+    }
+
+    // Afegim el nou carrer al final
+    currentStreet->next = newStreet;
+}
   }
 }
 

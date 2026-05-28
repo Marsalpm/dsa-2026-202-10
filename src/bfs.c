@@ -259,25 +259,42 @@ VisitedSet *createVisitedSet() {
 
 // Comprova si un segment (id1, id2) ja està dins el hash set
 int isVisitedSet(VisitedSet *set, long long id1, long long id2) {
-    normalize(&id1, &id2);
-    unsigned int index = visitedHash(id1, id2);
+
+    long long a = id1;
+    long long b = id2;
+
+    normalize(&a, &b);
+
+    unsigned int index = visitedHash(a, b);
+
     VisitedEntry *entry = set->table[index];
-    // Recorrem el bucket (normalment molt curt)
+
     while (entry != NULL) {
-        if (entry->id1 == id1 && entry->id2 == id2) return 1;
+
+        if (entry->id1 == a && entry->id2 == b)
+            return 1;
+
         entry = entry->next;
     }
+
     return 0;
 }
 
 // Afegeix un segment (id1, id2) al hash set
 void addVisitedSet(VisitedSet *set, long long id1, long long id2) {
-    normalize(&id1, &id2);
-    unsigned int index = visitedHash(id1, id2);
+
+    long long a = id1;
+    long long b = id2;
+
+    normalize(&a, &b);
+
+    unsigned int index = visitedHash(a, b);
+
     VisitedEntry *newEntry = malloc(sizeof(VisitedEntry));
-    newEntry->id1 = id1;
-    newEntry->id2 = id2;
-    newEntry->next = set->table[index]; // Inserim al principi del bucket
+    newEntry->id1 = a;
+    newEntry->id2 = b;
+
+    newEntry->next = set->table[index];
     set->table[index] = newEntry;
 }
 
@@ -364,43 +381,70 @@ void printRoute(PathNode *path){
         // Producte creuat per veure si es gira a la dreta o esquerra
         double cross = abx * bcy - aby * bcx;
         
-        // Si seguim al mateix carrer, només sumem la distància
-        if(strcmp(prev->street.name, current->street.name)==0){
-            distance += current->street.length;
+        // Si continuem pel mateix carrer, acumulem distància
+if(strcmp(prev->street.name, current->street.name)==0){
+
+    distance += current->street.length;
+}
+else{
+
+    // Evitem imprimir canvis absurds molt curts
+    if(distance > 15){
+
+        // Determinem si el gir és esquerra o dreta
+        if(cross < 0){
+
+            printf("Turn left to %s and continue for %dm\n",
+                   current->street.name,
+                   (int)distance);
         }
-        else{ // Si canviem de carrer
-            if(cross > 0) printf("Turn left to %s and continue for %dm\n", current->street.name, (int)distance);
-            else printf("Turn right to %s and continue for %dm\n", current->street.name, (int)distance);
-            
-            // Reiniciem la distància pel nou carrer
-            distance = current->street.length;
+        else{
+
+            printf("Turn right to %s and continue for %dm\n",
+                   current->street.name,
+                   (int)distance);
+        }
+    }
+
+    // Reiniciem la distància del nou carrer
+    distance = current->street.length;
         }
         
     }
     // Avís d'arribada al destí
-    printf("Turn to %s for %dm\n", current->street.name, (int)distance);
+    printf("Continue on %s for %dm\n", current->street.name, (int)distance);
     printf("You have arrived to your destination\n");
 }
 
 //Busca carrers connectats fent cerca lineal per tota la llista
-StreetNode *findConnectedLinear (StreetNode *streets, long long intersection){
-        StreetNode *result = NULL; //Nova llista carrers connectats trobats
+StreetNode *findConnectedLinear(StreetNode *streets, long long intersection){
 
-        while(streets != NULL){ //Recorre tota la llista de carrers 
-           if (streets->street.id1 == intersection ||
-            streets->street.id2 == intersection) { //Si carrer actual toca aquella intersecció (id1 o id2)
+    StreetNode *head = NULL; //Primer element de la llista resultat
+    StreetNode *tail = NULL; //Ultim element per mantenir l'ordre
 
-            StreetNode *newNode = malloc(sizeof(StreetNode));   //Reservem memòria per guardar un nou node  
-            newNode->street = streets->street;  //Creem copia del carrer trobat
-            newNode->next = result; ///Connecta el nou node amb la llista resultat (s'insereix al principi)
-            result = newNode; // Actualitzem el cap de la llista i ara el nou node es a la primera posició
+    while(streets != NULL){ //Recorrem tota la llista de carrers
+
+        if (streets->street.id1 == intersection || streets->street.id2 == intersection) {   //Comprova si el carrer actual toca aquella intersecció
+           
+            StreetNode *newNode = malloc(sizeof(StreetNode));//Reservem memòria per un nou node
+
+            newNode->street = streets->street;//Copiem el carrer trobat
+
+            newNode->next = NULL;//Com serà l'últim element, next apunta a NULL
+
+            if(head == NULL){//Si la llista està buida, aquest node serà el primer i l'últim
+                head = newNode;
+                tail = newNode;
+            }
+            else{
+                tail->next = newNode;//Afegim el nou node al final de la llista
+                tail = newNode; //Actualitzem el tail
+            }
         }
-        streets = streets->next; // Avança al seguent carrer de la llista original
+        streets = streets->next; //Avancem al següent carrer de la llista original
     }
-    return result; // Retorna nova llista de carrers connectats trobats
-    }
-
-
+    return head; //Retornem la nova llista de carrers connectats trobats
+}
     // BFS amb cerca lineal
 PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
 
