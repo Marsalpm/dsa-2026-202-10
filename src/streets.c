@@ -139,7 +139,7 @@ int printConnectedStreetsFast(HashMap *map, Street target) {
 
     int found_next = 0;// variable per saber si hem trobat el segment següent
     // recorrem tots els carrers de la intersecci
-    StreetList *sl = entry->streets;
+    StreetList *StreetList = entry->streets;
     while (StreetList != NULL) {
       if (strcmp(StreetList->street.name, target.name) != 0) {
         bool alreadyPrinted = false;
