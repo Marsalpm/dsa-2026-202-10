@@ -4,7 +4,7 @@
 #include "intersection.map.h"
 
 int main(){
-    StreetNode *streets = loadStreets("maps/xs_1/streets.txt"); //Carreguem tots els carrers del mapa i loadStreets crea una linked list de carrers
+    StreetNode *streets = loadStreets("maps/2xl_1/streets.txt"); //Carreguem tots els carrers del mapa i loadStreets crea una linked list de carrers
 
     StreetNode *closest = findClosestStreet(streets, 41.403782, 2.193446);  //Busquem quin segment esta mes aprop a aquestes coordenades de exemple
 
@@ -24,16 +24,18 @@ int main(){
     // VERSIÓ LAB5
     HashMap *graph = buildGraph(streets);   //Construim el hashmap
 
-    clock_t start2 = clock();
+    clock_t start2 = clock();   //Torna temps actual de CPU
 
-    printConnectedStreetsFast(graph, closest->street);
+    printConnectedStreetsFast(graph, closest->street);  //Busquem carrers al hasmap i agafem els carrers connectats
 
-    clock_t end2 = clock();
+    clock_t end2 = clock(); //Parem cronometre (temps CPU)
 
-    double temps2 = ((double)(end2 - start2)) / CLOCKS_PER_SEC;
-
+    double temps2 = ((double)(end2 - start2)) / CLOCKS_PER_SEC; //Calculem segons reals
+    // end2 - start2, dona ticks de CPU, no segons
+    //Dividir entre CLOCKS_PER_SEC ho pasa a segons
     printf("Temps hashmap: %f\n", temps2);
 
+    //Alliberem memòria
     freeHashMap(graph);
     freeStreets(streets);
 
