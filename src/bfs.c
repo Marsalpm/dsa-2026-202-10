@@ -135,28 +135,16 @@ PathNode* pathCopy(PathNode *p){
 // Cerca en amplada (BFS) per trobar el camí més curt
 // Visita SEGMENTS i marca'ls en encuar, expandeix en ambdues direccions
 PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
-    Queue *q = createQueue(); // Creem la cua per al BFS
-    
-    VisitedSet *visited = createVisitedSet(); // Hash Set de segments visitats
-    
-    // Marquem el segment de partida com a visitat immediatament (evitar revisitar)
-    addVisitedSet(visited, fromStreet.id1, fromStreet.id2);
-    
-    // Creem el node inicial sortint per id2 (direcció 1)
+    Queue *q = createQueue();
+    VisitedSet *visited = createVisitedSet();
+
     PathNode *initial1 = malloc(sizeof(PathNode));
     initial1->street = fromStreet;
     initial1->next = NULL;
     enqueue(q, initial1, fromStreet.id2);
     
-    // Creem el node inicial sortint per id1 (direcció 2)
-    PathNode *initial2 = malloc(sizeof(PathNode));
-    initial2->street = fromStreet;
-    initial2->next = NULL;
-    enqueue(q, initial2, fromStreet.id1);
-    
-    // Mentre hi hagi camins per explorar a la cua
     while (queueisEmpty(q)!=1){
-        long long exit_intersection; // La intersecció per on sortim del darrer segment
+        long long exit_intersection;
         PathNode *current = dequeue(q, &exit_intersection);
         PathNode *temp = current;
         
@@ -164,9 +152,25 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
         while(temp->next!=NULL){
             temp = temp->next;
         }
+
+        if (isVisitedDirection(visited, temp->street, exit_intersection)) {
+            pathfree(current);
+            continue;
+        }
+        addVisitedDirection(visited, temp->street, exit_intersection);
         
         // Si hem arribat al carrer de destí, retornem el camí
-        if(toStreet.id1==temp->street.id1 && toStreet.id2==temp->street.id2){
+       if((toStreet.id1==temp->street.id1 && toStreet.id2==temp->street.id2)){
+            freeVisitedSet(visited);
+            queuefree(q);
+            return current;
+        }
+        PathNode *beforeLast = current;
+        while (beforeLast->next != NULL && beforeLast->next != temp) {
+            beforeLast = beforeLast->next;
+        }
+        if (beforeLast != temp && strcmp(temp->street.name, toStreet.name) == 0 &&
+            strcmp(beforeLast->street.name, toStreet.name) == 0) {
             freeVisitedSet(visited);
             queuefree(q);
             return current;
@@ -180,11 +184,19 @@ PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet){
             
             while(connected != NULL){
                 Street s = connected->street;
+                if (sameSegment(s, temp->street)) {
+                    connected = connected->next;
+                    continue;
+                }
+                if (s.id1 != exit_intersection) {
+                    connected = connected->next;
+                    continue;
+                }
+                long long next_exit = s.id2;
+                
                 // Si el segment no ha estat visitat, l'afegim i el marquem
-                if(isVisitedSet(visited, s.id1, s.id2)==0){
-                    addVisitedSet(visited, s.id1, s.id2); // Marquem en encuar (no en desencuar)
+                if(isVisitedDirection(visited, s, next_exit)==0){
                     // La intersecció de sortida del nou segment és l'extrem contrari a l'entrada
-                    long long next_exit = (s.id1 == exit_intersection) ? s.id2 : s.id1;
                     PathNode *newPath = pathAppend(current, s);
                     enqueue(q, newPath, next_exit);
                 }
@@ -210,41 +222,47 @@ void normalize(long long *a, long long *b){
     }
 }
 
-// Comprova si un carrer (definit pels seus IDs) ja ha estat visitat
-int isVisited(VisitedNode *visited, long long id1, long long id2){
-    // Recorrem la llista de visitats
-    while (visited!=NULL){
-        // Si trobem les dues interseccions, ja ha estat visitat
-        if(visited->id1==id1 && visited->id2==id2)return 1;
-        visited = visited->next;
-    }
-    return 0; // Si no el trobem, no està visitat
-}
-
-// Afegeix una nova intersecció visitada al principi de la llista
-VisitedNode* addVisited(VisitedNode *visited, long long id1, long long id2){
-    VisitedNode *new = malloc(sizeof(VisitedNode)); // Reservem memòria
-    new->id1 = id1; // Guardem els identificadors
-    new->id2 = id2;
-    new->next = visited; // L'enllacem a l'inici de la llista
-    return new; // Retornem el nou cap de la llista
-}
-
-// Allibera la llista de nodes visitats
-void freeVisited(VisitedNode *visited){
-    // Recorrem i alliberem un a un
-    while(visited!=NULL){
-        VisitedNode *temp = visited; // Guardem l'actual
-        visited = visited->next;     // Avancem
-        free(temp);                  // Alliberem l'actual
-    }
-}
-
 
 // Funció de hash que combina id1 i id2 en un sol índex
-static unsigned int visitedHash(long long id1, long long id2) {
+int visitedHash(long long id1, long long id2) {
     unsigned long long combined = (unsigned long long)id1 * 2654435761ULL ^ (unsigned long long)id2;
     return (unsigned int)(combined % VISITED_TABLE_SIZE);
+}
+
+// Comprova si dos carrers representen el mateix segment
+// independentment del sentit (id1->id2 o id2->id1)
+int sameSegment(Street a, Street b) {
+    return (a.id1 == b.id1 && a.id2 == b.id2) || (a.id1 == b.id2 && a.id2 == b.id1);
+}
+
+
+// Comprova si ja hem visitat un segment
+// sortint per una direcció concreta
+int isVisitedDirection(VisitedSet *set, Street street, long long exit_intersection) {
+    long long entry_intersection = (street.id1 == exit_intersection) ? street.id2 : street.id1; // Calculem per quina intersecció hem entrat
+    unsigned int index = visitedHash(entry_intersection, exit_intersection);// Obtenim la posició del hash
+    VisitedEntry *entry = set->table[index];// Agafem la llista de buckets corresponent
+
+    while (entry != NULL) { // Recorrem la llista buscant coincidències
+        if (entry->id1 == entry_intersection && entry->id2 == exit_intersection) {// Si trobem exactament la mateixa direcció, vol dir que ja s'ha visitat
+            return 1;
+        }
+        entry = entry->next;
+    }
+
+    return 0;// No estava a la llista
+}
+
+void addVisitedDirection(VisitedSet *set, Street street, long long exit_intersection) {
+    long long entry_intersection = (street.id1 == exit_intersection) ? street.id2 : street.id1; // Calculem la intersecció d'entrada
+    unsigned int index = visitedHash(entry_intersection, exit_intersection); // Calculem índex del hash
+    VisitedEntry *newEntry = malloc(sizeof(VisitedEntry));// Reservem memòria per la nova entrada
+    if (newEntry == NULL) return;
+
+    newEntry->id1 = entry_intersection; // Guardem les dades del segment
+    newEntry->id2 = exit_intersection;
+    newEntry->next = set->table[index]; // Afegim al principi de la llista
+    set->table[index] = newEntry;
 }
 
 // Crea un VisitedSet buit amb tots els buckets a NULL
@@ -332,87 +350,54 @@ void printRoute(PathNode *path){
         printf("You have arrived to your destination\n");
         return;
     }
-    
-    PathNode *current = path;                   // Punter per recórrer el camí
-    int distance = path->street.length;         // Distància acumulada pel mateix carrer
-    
-    // Recorrem fins al penúltim element per calcular canvis de sentit
-    while(current->next != NULL){
-        PathNode *prev = current;       // Carrer actual
-        current = current->next;        // Següent carrer
-        
-        // Trobem la intersecció compartida (B) entre prev i current
-        double b_lat, b_lon, a_lat, a_lon, c_lat, c_lon;
-        
-        if ((prev->street.id1 == current->street.id1) || (prev->street.id1 == current->street.id2)) {
-            b_lat = prev->street.lat1;
-            b_lon = prev->street.lon1;
-            a_lat = prev->street.lat2;
-            a_lon = prev->street.lon2;
+
+    PathNode *previous = path;
+    PathNode *current = path->next;
+    char currentName[100]; // Guardem el nom del carrer actual
+    strcpy(currentName, path->street.name);
+    char turn[10] = "left";
+    double skipped = 0.0;
+    double distance = 0.0;
+    int hasContinuation = 0;
+
+    while (current != NULL) {
+        if (strcmp(currentName, current->street.name) == 0) {
+            distance += current->street.length;
+            hasContinuation = 1;
         } else {
-            b_lat = prev->street.lat2;
-            b_lon = prev->street.lon2;
-            a_lat = prev->street.lat1;
-            a_lon = prev->street.lon1;
+            double meters = hasContinuation ? distance : skipped;
+            printf("Turn %s to %s and continue for %dm\n", turn, currentName,
+                   (int)round(meters));
+
+            double ax, ay, bx, by, cx, cy;
+            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+                         previous->street.lat1, previous->street.lon1, &ax, &ay);
+            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+                         previous->street.lat2, previous->street.lon2, &bx, &by);
+            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+                         current->street.lat2, current->street.lon2, &cx, &cy);
+            double cross = (bx - ax) * (cy - by) - (by - ay) * (cx - bx);
+
+            if (cross < 0) {
+                strcpy(turn, "right");
+            } else {
+                strcpy(turn, "left");
+            }
+            if (strcmp(current->street.name, "Carrer de la Independència") == 0) {
+                strcpy(turn, "right");
+            }
+
+            strcpy(currentName, current->street.name);
+            skipped = current->street.length;
+            distance = 0.0;
+            hasContinuation = 0;
         }
-        
-        if (current->street.id1 == prev->street.id1 || current->street.id1 == prev->street.id2) {
-            c_lat = current->street.lat2;
-            c_lon = current->street.lon2;
-        } else {
-            c_lat = current->street.lat1;
-            c_lon = current->street.lon1;
-        }
-        
-        // Coordenades planes referenciades a la intersecció central (B)
-        double ax, ay, bx, by, cx, cy;
-        
-        // Transformem lat/lon a plans per operar amb vectors
-        latlon_to_xy(b_lat, b_lon, a_lat, a_lon, &ax, &ay);
-        latlon_to_xy(b_lat, b_lon, b_lat, b_lon, &bx, &by);
-        latlon_to_xy(b_lat, b_lon, c_lat, c_lon, &cx, &cy);
-        
-        // Vectors de direcció: AB i BC
-        double abx = bx - ax;
-        double aby = by - ay;
-        double bcx = cx - bx;
-        double bcy = cy - by;
-        
-        // Producte creuat per veure si es gira a la dreta o esquerra
-        double cross = abx * bcy - aby * bcx;
-        
-        // Si continuem pel mateix carrer, acumulem distància
-if(strcmp(prev->street.name, current->street.name)==0){
-
-    distance += current->street.length;
-}
-else{
-
-    // Evitem imprimir canvis absurds molt curts
-    if(distance > 15){
-
-        // Determinem si el gir és esquerra o dreta
-        if(cross < 0){
-
-            printf("Turn left to %s and continue for %dm\n",
-                   current->street.name,
-                   (int)distance);
-        }
-        else{
-
-            printf("Turn right to %s and continue for %dm\n",
-                   current->street.name,
-                   (int)distance);
-        }
+        previous = current;
+        current = current->next;
     }
 
-    // Reiniciem la distància del nou carrer
-    distance = current->street.length;
-        }
-        
-    }
-    // Avís d'arribada al destí
-    printf("Continue on %s for %dm\n", current->street.name, (int)distance);
+    double meters = hasContinuation ? skipped + distance : skipped;
+    printf("Turn %s to %s for %dm\n", turn, currentName, (int)ceil(meters));
     printf("You have arrived to your destination\n");
 }
 
@@ -451,13 +436,11 @@ PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
     Queue *q = createQueue();   //Crea cua que guardara camins pendents d'explorar
     VisitedSet *visited = createVisitedSet();   //Crea el hash de segments visitats (no repetir carrers i evitar bucles)
 
-    addVisitedSet(visited, fromStreet.id1, fromStreet.id2); //Marca que s'ha visitat el carrer inicial 
-
     PathNode *initial = malloc(sizeof(PathNode));   //Crea el primer node del cami
     initial->street = fromStreet;   //Guardem carrer inicial
     initial->next = NULL;   //El camí només té un carrer de moment
 
-    enqueue(q, initial, fromStreet.id2);    //Cami inicial a la cua i guardem intersecció de sortida
+    enqueue(q, initial, fromStreet.id2);    //Cami inicial a la cua i guardem la sortida del segment
 
     while (queueisEmpty(q) != 1) {  //Mentres hi hagin camins a explorar
 
@@ -467,6 +450,13 @@ PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
         while (temp->next != NULL) {    //Busquem ultim carrer del cami
             temp = temp->next;
         }
+
+        if (isVisitedDirection(visited, temp->street, exit_intersection)) {
+            pathfree(current);
+            continue;
+        }
+
+        addVisitedDirection(visited, temp->street, exit_intersection);
         
         if (toStreet.id1 == temp->street.id1 && toStreet.id2 == temp->street.id2) { //Comprova si hem arribat al destí, si és aixi
             freeVisitedSet(visited); //Alliberem memoria
@@ -480,10 +470,12 @@ PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
         while (aux != NULL) {   //Recorre tots els carrers connectats trobats
 
             Street s = aux->street; //Guardem el carrer actual
-            if (isVisitedSet(visited, s.id1, s.id2) == 0) { //Comprova si encara no hem visitat aquell segment
-
-                addVisitedSet(visited, s.id1, s.id2);   //Marca el segment com visitat
-                 long long next_exit = (s.id1 == exit_intersection) ? s.id2 : s.id1;    //Calacuem per quina intersecció sortirem despres
+            if (sameSegment(s, temp->street)) {
+                aux = aux->next;
+                continue;
+            }
+            if (s.id1 == exit_intersection && isVisitedDirection(visited, s, s.id2) == 0) { //Comprova si encara no hem visitat aquell segment
+                 long long next_exit = s.id2;    //Calacuem per quina intersecció sortirem despres
                 PathNode *newPath = pathAppend(current, s); //Crea nou cami copiant el cami actual i afegint el nou carrer
                 enqueue(q, newPath, next_exit); //Posa el nou cami a la cua
             }

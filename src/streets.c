@@ -39,8 +39,16 @@ StreetNode *addStreet(StreetNode *head, Street s) { // Afegir nodes a la llista
   if (!newNode)
     return head;
   newNode->street = s;
-  newNode->next = head;
-  return newNode;
+  newNode->next = NULL;
+  if (head == NULL) {
+    return newNode;
+  }
+  StreetNode *current = head;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+  current->next = newNode;
+  return head;
 }
 
 void freeStreets(StreetNode *head) { // Alliberem memoria
@@ -81,7 +89,7 @@ StreetNode *findClosestStreet(StreetNode *head, double userLat,
         haversine(userLat, userLon, midLat,
                   midLon); // Calculem la distancia de la persona al punt mitja
 
-    if (distance <
+    if (distance <=
         minDistance) { // Si es mes petit que el que teniem, actualitzem
       minDistance = distance;
       closest = current;

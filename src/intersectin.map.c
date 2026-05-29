@@ -5,7 +5,10 @@
 #include <string.h>
 
 // Converteix un intersectionId (molt gran) en un índex petit dins la taula hash
-int hash(long long id) { return id % TABLE_SIZE; }
+int hash(long long id) { 
+    long long h = id % TABLE_SIZE;
+    return (int)(h < 0 ? -h : h);
+}
 
 // Crea i inicialitza el hashmap
 HashMap *createHashMap() {

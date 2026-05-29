@@ -51,9 +51,6 @@ void pathfree(PathNode *p);
 PathNode* pathCopy(PathNode *p);
 PathNode* pathAppend(PathNode *p, Street street);
 PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet);
-int isVisited(VisitedNode *visited, long long id1, long long id2);
-void freeVisited(VisitedNode *visited);
-VisitedNode* addVisited(VisitedNode *visited, long long id1, long long id2);
 VisitedSet *createVisitedSet();
 int isVisitedSet(VisitedSet *set, long long id1, long long id2);
 void addVisitedSet(VisitedSet *set, long long id1, long long id2);
@@ -62,4 +59,8 @@ void printRoute(PathNode *path);
 void latlon_to_xy(double lat_ref, double lon_ref, double lat, double lon, double *x, double *y);
 StreetNode *findConnectedLinear (StreetNode *streets, long long intersection);
 PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet);
+int sameSegment(Street a, Street b);
+int isVisitedDirection(VisitedSet *set, Street street, long long exit_intersection);
+void addVisitedDirection(VisitedSet *set, Street street, long long exit_intersection);
+int visitedHash(long long id1, long long id2);
 #endif
