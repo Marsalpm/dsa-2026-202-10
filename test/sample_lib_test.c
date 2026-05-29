@@ -683,14 +683,14 @@ void test_queue_enqueue_dequeue(){
     p->street = s;
     p->next = NULL;
 
-    enqueue(q, p);
-
-    PathNode *res = dequeue(q);
+    enqueue(q, p, 2);
+    long long exit_interection;
+    PathNode *res = dequeue(q , &exit_interection);
 
     assertEquals(res->street.name, "Test");
 
     pathfree(res);
-    free(q);
+    queuefree(q);
   }
   successtest();
 }
@@ -766,14 +766,152 @@ void test_bfs_troba_cami(){
   successtest();
 }
 
+void test_queue_dequeue_buit_retorna_null(){
+  runningtest("test_queue_dequeue_buit_retorna_null");
+  {
+    Queue *q = createQueue();
+    PathNode *res = dequeue(q, NULL);
+    assertNull(res);
+    queuefree(q);
+  }
+  successtest();
+}
+
+void test_pathCopy_null(){
+  runningtest("test_pathCopy_null");
+  {
+    PathNode *copy = pathCopy(NULL);
+    assertNull(copy);
+  }
+  successtest();
+}
+
+void test_pathAppend(){
+  runningtest("test_pathAppend");
+  {
+    Street s1 = {1,0,0,2,0,0,10,"A"};
+    Street s2 = {2,0,0,3,0,0,10,"B"};
+
+    PathNode *p = malloc(sizeof(PathNode));
+    p->street = s1;
+    p->next = NULL;
+
+    PathNode *result = pathAppend(p, s2);
+
+    assertEquals(result->street.name, "A");
+    assertEquals(result->next->street.name, "B");
+
+    pathfree(p);
+    pathfree(result);
+  }
+  successtest();
+}
+
+void test_pathAppend_cami_buit(){
+  runningtest("test_pathAppend_cami_buit");
+  {
+    Street s = {1,0,0,2,0,0,10,"A"};
+    PathNode *result = pathAppend(NULL, s);
+
+    assertEquals(result->street.name, "A");
+    assertNull(result->next);
+
+    pathfree(result);
+  }
+  successtest();
+}
+
+void test_sameSegment_mateix(){
+  runningtest("test_sameSegment_mateix_segment");
+  {
+    Street a = {1,0,0,2,0,0,10,"A"};
+    Street b = {1,0,0,2,0,0,10,"A"};
+    assertEqualsInt(sameSegment(a, b), 1);
+  }
+  successtest();
+}
+
+void test_sameSegment_invers(){
+  runningtest("test_sameSegment_segment_invers");
+  {
+    Street a = {1,0,0,2,0,0,10,"A"};
+    Street b = {2,0,0,1,0,0,10,"A"};
+    assertEqualsInt(sameSegment(a, b), 1);
+  }
+  successtest();
+}
+
+void test_sameSegment_diferent(){
+  runningtest("test_sameSegment_segments_diferents");
+  {
+    Street a = {1,0,0,2,0,0,10,"A"};
+    Street b = {3,0,0,4,0,0,10,"B"};
+    assertEqualsInt(sameSegment(a, b), 0);
+  }
+  successtest();
+}
+
+void test_bfs_no_troba_cami(){
+  runningtest("test_bfs_no_troba_cami");
+  {
+    Street s1 = {1,0,0,2,0,0,10,"A"};
+    Street s2 = {3,0,0,4,0,0,10,"B"};
+
+    StreetNode *list = NULL;
+    list = addStreet(list, s1);
+    list = addStreet(list, s2);
+
+    HashMap *graph = buildGraph(list);
+    PathNode *path = bfs(graph, s1, s2);
+
+    assertNull(path);
+
+    freeHashMap(graph);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+void test_bfs_slow_troba_cami(){
+  runningtest("test_bfs_slow_troba_cami");
+  {
+    Street s1 = {1,0,0,2,0,0,10,"A"};
+    Street s2 = {2,0,0,3,0,0,10,"B"};
+
+    StreetNode *list = NULL;
+    list = addStreet(list, s1);
+    list = addStreet(list, s2);
+
+    PathNode *path = bfs_slow(list, s1, s2);
+
+    if(path == NULL) assertEqualsInt(1, 0);
+    assertEquals(path->street.name, "A");
+
+    pathfree(path);
+    freeStreets(list);
+  }
+  successtest();
+}
+
+
 void bfs_test(){
   running("bfs_test");
   {
     test_queue_enqueue_dequeue();
     test_queue_buida();
+    test_queue_dequeue_buit_retorna_null();
     test_pathCopy();
+    test_pathCopy_null();
+    test_pathAppend();
+    test_pathAppend_cami_buit();
+    test_sameSegment_mateix();
+    test_sameSegment_invers();
+    test_sameSegment_diferent();
     test_visitedSet();
     test_bfs_troba_cami();
+    test_bfs_no_troba_cami();
+    test_bfs_slow_troba_cami();
   }
-    success();
+  success();
 }
+

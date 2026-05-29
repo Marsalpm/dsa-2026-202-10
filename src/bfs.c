@@ -345,38 +345,40 @@ void printRoute(PathNode *path){
     if (path == NULL) return;
     
     printf("Start at %s\n", path->street.name); // Inici
-    
+
+    //Cas inicial: en cas de ser el mateix carrer incial = al destí
     if (path->next == NULL) {
         printf("You have arrived to your destination\n");
         return;
     }
-
-    PathNode *previous = path;
-    PathNode *current = path->next;
+// inicialització de variables pel seguiment del camí
+    PathNode *previous = path; // node anteiro per calcular els girs
+    PathNode *current = path->next; // node actual
     char currentName[100]; // Guardem el nom del carrer actual
     strcpy(currentName, path->street.name);
     char turn[10] = "left";
     double skipped = 0.0;
     double distance = 0.0;
     int hasContinuation = 0;
-
+// Recorrem tota la llista enllaçada de la ruta
     while (current != NULL) {
+        // si el carrer canvia hem de mostar la intsrucció de gir i calcular el seguent.
         if (strcmp(currentName, current->street.name) == 0) {
             distance += current->street.length;
             hasContinuation = 1;
-        } else {
-            double meters = hasContinuation ? distance : skipped;
+        } else { // si el carre canvia hem de mostar la instrucó del gir i calcular el seguent.
+            double meters = hasContinuation ? distance : skipped; // decidim quina distancia mostar 
             printf("Turn %s to %s and continue for %dm\n", turn, currentName,
                    (int)round(meters));
-
+// Calcul geometric del gir: convertim les coordenades de les intereccións a un pla cartesià. Apliquem vectors
             double ax, ay, bx, by, cx, cy;
-            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+            latlon_to_xy(previous->street.lat2, previous->street.lon2, // vector d'entrada
                          previous->street.lat1, previous->street.lon1, &ax, &ay);
-            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+            latlon_to_xy(previous->street.lat2, previous->street.lon2, // punt d'intersecció
                          previous->street.lat2, previous->street.lon2, &bx, &by);
-            latlon_to_xy(previous->street.lat2, previous->street.lon2,
+            latlon_to_xy(previous->street.lat2, previous->street.lon2, // Punt de sortida
                          current->street.lat2, current->street.lon2, &cx, &cy);
-            double cross = (bx - ax) * (cy - by) - (by - ay) * (cx - bx);
+            double cross = (bx - ax) * (cy - by) - (by - ay) * (cx - bx); // Calculem el producte vertorial
 
             if (cross < 0) {
                 strcpy(turn, "right");
@@ -386,16 +388,16 @@ void printRoute(PathNode *path){
             if (strcmp(current->street.name, "Carrer de la Independència") == 0) {
                 strcpy(turn, "right");
             }
-
+//Reset de variable per al nou carrer detectat
             strcpy(currentName, current->street.name);
             skipped = current->street.length;
             distance = 0.0;
             hasContinuation = 0;
-        }
+        } // Avancem els punters per a la següent iteració
         previous = current;
         current = current->next;
     }
-
+// Imprimim l'última instrucció abans d'arribar.
     double meters = hasContinuation ? skipped + distance : skipped;
     printf("Turn %s to %s for %dm\n", turn, currentName, (int)ceil(meters));
     printf("You have arrived to your destination\n");
