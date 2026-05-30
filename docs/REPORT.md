@@ -62,9 +62,9 @@ Podem veure que la versió del LAB 4 (Lineal Search) normalment triga més que l
 
 ## A plot comparing the latency to find a path between two points finding connected streets sequentially looking through the list compared to using the intersections map, depending on the map size (but keeping the same origin and destination). Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results.
 | Map  ||  BFS Slow (ms)    | T (ms)||  BFS Fast (ms)    | T(ms) |
-| xs_1 || 0.165 0.043 0.188 | 0.132 || 0.086 0.014 0.005 | 0.035 |
-| xs_2 || 0.039 0.068 0.067 | 0.058 || 0.014 0.029 0.031 | 0.024 |
-| md_1 || 0.043 0.098 0.137 | 0.092 || 0.015 0.024 0.054 | 0.031 |
-| lg_1 || 0.073 0.077 0.059 | 0.690 || 0.087 0.043 0.023 | 0.051 |
-| xl_1 || 0.161 0.244 0.152 | 0.179 || 0.034 0.029 0.033 | 0.032 |
-| 2xl_1|| 0.492 0.845 0.516 | 0.617 || 0.049 0.044 0.047 | 0.046 |
+| xs_1 || 0.047 0.086 0.091 | 0.074 || 0.017 0.037 0.038 | 0.030 |
+| xs_2 || 0.157 0.099 0.092 | 0.116 || 0.051 0.042 0.039 | 0.044 |
+| md_1 || 0.947 0.870 0.927 | 0.914 || 0.237 0.127 0.167 | 0.177 |
+| lg_1 || 2.366 4.089 2.398 | 2.951 || 0.052 0.060 0.051 | 0.054 |
+| xl_1 || 248.317 300.434 251.224 | 266.658 || 4.432 4.527 4.481 | 4.480 |
+| 2xl_1|| 5.681 4.317 4.959 | 4.985 || 0.026 0.026 0.027 | 0.026 |
