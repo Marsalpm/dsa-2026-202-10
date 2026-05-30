@@ -557,8 +557,8 @@ void test_addStreet_insercio_principi(){
       list = addStreet(list, s1);
       list = addStreet(list, s2);
 
-      assertEquals(list->street.name, "Segon");
-      assertEquals(list->next->street.name, "Primer");
+      assertEquals(list->street.name, "Primer");
+      assertEquals(list->next->street.name, "Segon");
 
       freeStreets(list);
     }
