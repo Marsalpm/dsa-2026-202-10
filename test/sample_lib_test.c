@@ -1,15 +1,15 @@
+#include "../src/bfs.h"
 #include "../src/houses.h"
+#include "../src/intersection.map.h"
 #include "../src/place.h"
 #include "../src/sample_lib.h"
 #include "../src/streets.h"
-#include "../src/bfs.h"
-#include "../src/intersection.map.h"
 #include "utils.h"
 #include <math.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 void test_fact4() {
   runningtest("test_fact4");
@@ -531,8 +531,8 @@ void test_findClosestStreet_basic() {
   }
 }
 
-//Comprovar que inserir el primer carrer funciona
-void test_addStreet_llista_buida(){ 
+// Comprovar que inserir el primer carrer funciona
+void test_addStreet_llista_buida() {
   runningtest("test_addStreet_llista_buida");
   {
     Street s = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Carrer Test"};
@@ -540,48 +540,48 @@ void test_addStreet_llista_buida(){
 
     list = addStreet(list, s);
     assertEquals(list->street.name, "Carrer Test");
-    assertEqualsInt(list->street.id1,1);
+    assertEqualsInt(list->street.id1, 1);
     freeStreets(list);
   }
   successtest();
 }
 
-//Comprovar que els nous nodes entrel al principi
-void test_addStreet_insercio_principi(){
+// Comprovar que els nous nodes entrel al principi
+void test_addStreet_insercio_principi() {
   runningtest("test_addStreet_insercio_principi");
-    {
-      Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Primer"};
-      Street s2 = {3, 41.2, 2.2, 4, 41.3, 2.3, 200, "Segon"};
+  {
+    Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Primer"};
+    Street s2 = {3, 41.2, 2.2, 4, 41.3, 2.3, 200, "Segon"};
 
-      StreetNode *list = NULL;
-      list = addStreet(list, s1);
-      list = addStreet(list, s2);
+    StreetNode *list = NULL;
+    list = addStreet(list, s1);
+    list = addStreet(list, s2);
 
-      assertEquals(list->street.name, "Primer");
-      assertEquals(list->next->street.name, "Segon");
+    assertEquals(list->street.name, "Primer");
+    assertEquals(list->next->street.name, "Segon");
 
-      freeStreets(list);
-    }
+    freeStreets(list);
+  }
   successtest();
 }
 
-//Comprovar que tria el carrer correcte
-void test_findClosestStreet_mes_proper(){
+// Comprovar que tria el carrer correcte
+void test_findClosestStreet_mes_proper() {
   runningtest("test_findClosestStreet_mes_proper");
-    {
-      Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Lluny"};
-      Street s2 = {3, 41.4, 2.1, 4, 41.41, 2.11, 100, "Proper"};
+  {
+    Street s1 = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Lluny"};
+    Street s2 = {3, 41.4, 2.1, 4, 41.41, 2.11, 100, "Proper"};
 
-      StreetNode *list = NULL;
-      list = addStreet(list, s1);
-      list = addStreet(list, s2);
+    StreetNode *list = NULL;
+    list = addStreet(list, s1);
+    list = addStreet(list, s2);
 
-      StreetNode *res = findClosestStreet(list, 41.405, 2.105);
+    StreetNode *res = findClosestStreet(list, 41.405, 2.105);
 
-      assertEquals(res->street.name, "Proper");
+    assertEquals(res->street.name, "Proper");
 
-      freeStreets(list);
-    }
+    freeStreets(list);
+  }
   successtest();
 }
 
@@ -598,29 +598,28 @@ void streets_test() {
   success();
 }
 
-
-void test_buildGraph_no_null(){
+void test_buildGraph_no_null() {
   runningtest("test_buildGraph_no_null");
-    {
-      Street s = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Test"};
+  {
+    Street s = {1, 41.0, 2.0, 2, 41.1, 2.1, 100, "Test"};
 
-      StreetNode *list = NULL;
-      list = addStreet(list, s);
+    StreetNode *list = NULL;
+    list = addStreet(list, s);
 
-      HashMap *graph = buildGraph(list);
+    HashMap *graph = buildGraph(list);
 
-      if(graph == NULL) {
-       assertEqualsInt(1, 0);
-      }
-
-      freeHashMap(graph);
-      freeStreets(list);
+    if (graph == NULL) {
+      assertEqualsInt(1, 0);
     }
+
+    freeHashMap(graph);
+    freeStreets(list);
+  }
   successtest();
 }
 
-void test_findIntersection_existeix(){
-runningtest("test_findIntersection_existeix");
+void test_findIntersection_existeix() {
+  runningtest("test_findIntersection_existeix");
   {
     Street s = {10, 41.0, 2.0, 20, 41.1, 2.1, 100, "Test"};
 
@@ -631,7 +630,7 @@ runningtest("test_findIntersection_existeix");
 
     HashEntry *entry = findIntersection(graph, 10);
 
-    if(entry == NULL) {
+    if (entry == NULL) {
       assertEqualsInt(1, 0);
     }
 
@@ -641,8 +640,8 @@ runningtest("test_findIntersection_existeix");
   successtest();
 }
 
-void test_findIntersection_inexistent(){
-runningtest("test_findIntersection_inexistent");
+void test_findIntersection_inexistent() {
+  runningtest("test_findIntersection_inexistent");
   {
     Street s = {10, 41.0, 2.0, 20, 41.1, 2.1, 100, "Test"};
 
@@ -661,8 +660,7 @@ runningtest("test_findIntersection_inexistent");
   successtest();
 }
 
-
-void intersection_test(){
+void intersection_test() {
   running("intersection_test");
   {
     test_buildGraph_no_null();
@@ -672,12 +670,12 @@ void intersection_test(){
   success();
 }
 
-void test_queue_enqueue_dequeue(){
+void test_queue_enqueue_dequeue() {
   runningtest("test_queue_enqueue_dequeue");
   {
     Queue *q = createQueue();
 
-    Street s = {1, 0,0,2,0,0,10,"Test"};
+    Street s = {1, 0, 0, 2, 0, 0, 10, "Test"};
 
     PathNode *p = malloc(sizeof(PathNode));
     p->street = s;
@@ -685,7 +683,7 @@ void test_queue_enqueue_dequeue(){
 
     enqueue(q, p, 2);
     long long exit_interection;
-    PathNode *res = dequeue(q , &exit_interection);
+    PathNode *res = dequeue(q, &exit_interection);
 
     assertEquals(res->street.name, "Test");
 
@@ -695,22 +693,22 @@ void test_queue_enqueue_dequeue(){
   successtest();
 }
 
-void test_queue_buida(){
- runningtest("test_queue_buida");
- {
-  Queue *q = createQueue();
+void test_queue_buida() {
+  runningtest("test_queue_buida");
+  {
+    Queue *q = createQueue();
 
-  assertEqualsInt(queueisEmpty(q), 1);
+    assertEqualsInt(queueisEmpty(q), 1);
 
-  free(q);
- }
- successtest();
+    free(q);
+  }
+  successtest();
 }
 
-void test_pathCopy(){
+void test_pathCopy() {
   runningtest("test_pathCopy");
   {
-    Street s = {1,0,0,2,0,0,10,"Test"};
+    Street s = {1, 0, 0, 2, 0, 0, 10, "Test"};
 
     PathNode *p = malloc(sizeof(PathNode));
     p->street = s;
@@ -726,7 +724,7 @@ void test_pathCopy(){
   successtest();
 }
 
-void test_visitedSet(){
+void test_visitedSet() {
   runningtest("test_visitedSet");
   {
     VisitedSet *set = createVisitedSet();
@@ -741,11 +739,11 @@ void test_visitedSet(){
   successtest();
 }
 
-void test_bfs_troba_cami(){
+void test_bfs_troba_cami() {
   runningtest("test_bfs_troba_cami");
   {
-    Street s1 = {1,0,0,2,0,0,10,"A"};
-    Street s2 = {2,0,0,3,0,0,10,"B"};
+    Street s1 = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street s2 = {2, 0, 0, 3, 0, 0, 10, "B"};
 
     StreetNode *list = NULL;
     list = addStreet(list, s1);
@@ -755,7 +753,7 @@ void test_bfs_troba_cami(){
 
     PathNode *path = bfs(graph, s1, s2);
 
-    if(path == NULL) {
+    if (path == NULL) {
       assertEqualsInt(1, 0);
     }
 
@@ -766,7 +764,7 @@ void test_bfs_troba_cami(){
   successtest();
 }
 
-void test_queue_dequeue_buit_retorna_null(){
+void test_queue_dequeue_buit_retorna_null() {
   runningtest("test_queue_dequeue_buit_retorna_null");
   {
     Queue *q = createQueue();
@@ -777,7 +775,7 @@ void test_queue_dequeue_buit_retorna_null(){
   successtest();
 }
 
-void test_pathCopy_null(){
+void test_pathCopy_null() {
   runningtest("test_pathCopy_null");
   {
     PathNode *copy = pathCopy(NULL);
@@ -786,11 +784,11 @@ void test_pathCopy_null(){
   successtest();
 }
 
-void test_pathAppend(){
+void test_pathAppend() {
   runningtest("test_pathAppend");
   {
-    Street s1 = {1,0,0,2,0,0,10,"A"};
-    Street s2 = {2,0,0,3,0,0,10,"B"};
+    Street s1 = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street s2 = {2, 0, 0, 3, 0, 0, 10, "B"};
 
     PathNode *p = malloc(sizeof(PathNode));
     p->street = s1;
@@ -807,10 +805,10 @@ void test_pathAppend(){
   successtest();
 }
 
-void test_pathAppend_cami_buit(){
+void test_pathAppend_cami_buit() {
   runningtest("test_pathAppend_cami_buit");
   {
-    Street s = {1,0,0,2,0,0,10,"A"};
+    Street s = {1, 0, 0, 2, 0, 0, 10, "A"};
     PathNode *result = pathAppend(NULL, s);
 
     assertEquals(result->street.name, "A");
@@ -821,41 +819,41 @@ void test_pathAppend_cami_buit(){
   successtest();
 }
 
-void test_sameSegment_mateix(){
+void test_sameSegment_mateix() {
   runningtest("test_sameSegment_mateix_segment");
   {
-    Street a = {1,0,0,2,0,0,10,"A"};
-    Street b = {1,0,0,2,0,0,10,"A"};
+    Street a = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street b = {1, 0, 0, 2, 0, 0, 10, "A"};
     assertEqualsInt(sameSegment(a, b), 1);
   }
   successtest();
 }
 
-void test_sameSegment_invers(){
+void test_sameSegment_invers() {
   runningtest("test_sameSegment_segment_invers");
   {
-    Street a = {1,0,0,2,0,0,10,"A"};
-    Street b = {2,0,0,1,0,0,10,"A"};
+    Street a = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street b = {2, 0, 0, 1, 0, 0, 10, "A"};
     assertEqualsInt(sameSegment(a, b), 1);
   }
   successtest();
 }
 
-void test_sameSegment_diferent(){
+void test_sameSegment_diferent() {
   runningtest("test_sameSegment_segments_diferents");
   {
-    Street a = {1,0,0,2,0,0,10,"A"};
-    Street b = {3,0,0,4,0,0,10,"B"};
+    Street a = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street b = {3, 0, 0, 4, 0, 0, 10, "B"};
     assertEqualsInt(sameSegment(a, b), 0);
   }
   successtest();
 }
 
-void test_bfs_no_troba_cami(){
+void test_bfs_no_troba_cami() {
   runningtest("test_bfs_no_troba_cami");
   {
-    Street s1 = {1,0,0,2,0,0,10,"A"};
-    Street s2 = {3,0,0,4,0,0,10,"B"};
+    Street s1 = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street s2 = {3, 0, 0, 4, 0, 0, 10, "B"};
 
     StreetNode *list = NULL;
     list = addStreet(list, s1);
@@ -872,11 +870,11 @@ void test_bfs_no_troba_cami(){
   successtest();
 }
 
-void test_bfs_slow_troba_cami(){
+void test_bfs_slow_troba_cami() {
   runningtest("test_bfs_slow_troba_cami");
   {
-    Street s1 = {1,0,0,2,0,0,10,"A"};
-    Street s2 = {2,0,0,3,0,0,10,"B"};
+    Street s1 = {1, 0, 0, 2, 0, 0, 10, "A"};
+    Street s2 = {2, 0, 0, 3, 0, 0, 10, "B"};
 
     StreetNode *list = NULL;
     list = addStreet(list, s1);
@@ -884,7 +882,8 @@ void test_bfs_slow_troba_cami(){
 
     PathNode *path = bfs_slow(list, s1, s2);
 
-    if(path == NULL) assertEqualsInt(1, 0);
+    if (path == NULL)
+      assertEqualsInt(1, 0);
     assertEquals(path->street.name, "A");
 
     pathfree(path);
@@ -893,8 +892,7 @@ void test_bfs_slow_troba_cami(){
   successtest();
 }
 
-
-void bfs_test(){
+void bfs_test() {
   running("bfs_test");
   {
     test_queue_enqueue_dequeue();
@@ -914,4 +912,3 @@ void bfs_test(){
   }
   success();
 }
-

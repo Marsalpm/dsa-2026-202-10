@@ -19,7 +19,9 @@ HouseNode *findHouse(HouseNode *head, char *street, int number);
 
 void printCoordinates(House house, double *lat, double *lon);
 void freeHouses(HouseNode *head);
-int cerca_inteligent_houses(HouseNode *head, char *street, int number, StreetNode *streets, double *lat, double *lon, int showConnection);
+int cerca_inteligent_houses(HouseNode *head, char *street, int number,
+                            StreetNode *streets, double *lat, double *lon,
+                            int showConnection);
 
 int levenshteinDistance(char *a, char *b);
 int min3(int a, int b, int c);

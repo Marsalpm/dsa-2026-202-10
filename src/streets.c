@@ -22,9 +22,9 @@ StreetNode *loadStreets(char *filename) {
     Street s;
     if (sscanf(line, "%lld,%lf,%lf,%lld,%lf,%lf,%lf, %99[^\n]", &s.id1, &s.lat1,
                &s.lon1, &s.id2, &s.lat2, &s.lon2, &s.length, s.name) == 8) {
-        if(s.name[0] == ' '){
-        memmove(s.name, s.name+1, strlen(s.name)+1);
-    }
+      if (s.name[0] == ' ') {
+        memmove(s.name, s.name + 1, strlen(s.name) + 1);
+      }
       s.name[strcspn(s.name, "\r\n")] = '\0';
       head = addStreet(head, s);
     }
@@ -133,39 +133,43 @@ void printConnectedStreets(StreetNode *head, Street target) {
   }
 }
 
-
 int printConnectedStreetsFast(HashMap *map, Street target) {
   int printedCount = 0;
   char printed[100][100];
   printf("- %s\n", target.name);
 
-  long long currentId = target.id2; // comencem per on acaba el segment més proper
+  long long currentId =
+      target.id2; // comencem per on acaba el segment més proper
 
-  while (true) { //bucle infinit que sortim manualment amb break
-    HashEntry *entry = findIntersection(map, currentId);//  busquem la intersecció actual al hashmap
-    if (entry == NULL) break;//si no existeix, sortim
+  while (true) { // bucle infinit que sortim manualment amb break
+    HashEntry *entry = findIntersection(
+        map, currentId); //  busquem la intersecció actual al hashmap
+    if (entry == NULL)
+      break; // si no existeix, sortim
 
-    int found_next = 0;// variable per saber si hem trobat el segment següent
+    int found_next = 0; // variable per saber si hem trobat el segment següent
     // recorrem tots els carrers de la intersecci
     StreetList *StreetList = entry->streets;
     while (StreetList != NULL) {
       if (strcmp(StreetList->street.name, target.name) != 0) {
         bool alreadyPrinted = false;
         for (int j = 0; j < printedCount; j++) {
-          if (strcmp(printed[j], StreetList->street.name) == 0) { 
-            alreadyPrinted = true; 
-            break; 
+          if (strcmp(printed[j], StreetList->street.name) == 0) {
+            alreadyPrinted = true;
+            break;
           }
         }
         if (!alreadyPrinted) {
-          if (printedCount == 0) printf("    Which is connected to:\n");
+          if (printedCount == 0)
+            printf("    Which is connected to:\n");
           printf("     - %s\n", StreetList->street.name);
           strcpy(printed[printedCount], StreetList->street.name);
           printedCount++;
           return printedCount;
         }
       } else {
-        if (StreetList->street.id1 == currentId && StreetList->street.id2 != target.id1) {
+        if (StreetList->street.id1 == currentId &&
+            StreetList->street.id2 != target.id1) {
           currentId = StreetList->street.id2;
           found_next = 1;
           break;
@@ -173,36 +177,44 @@ int printConnectedStreetsFast(HashMap *map, Street target) {
       }
       StreetList = StreetList->next;
     }
-    if (!found_next) break;//si no hem trobat continuació del carrer, sortim del bucle
+    if (!found_next)
+      break; // si no hem trobat continuació del carrer, sortim del bucle
   }
-  if (printedCount == 0) printf("    No connections found\n");
+  if (printedCount == 0)
+    printf("    No connections found\n");
   return printedCount;
 }
 
-void processLocation(double lat, double lon, StreetNode *streets, int showConnection) {
-   int count = 0;
-    StreetNode *tmp = streets;
-    while(tmp != NULL){ count++; tmp = tmp->next; }
-    StreetNode *closest = findClosestStreet(streets, lat, lon);
+void processLocation(double lat, double lon, StreetNode *streets,
+                     int showConnection) {
+  int count = 0;
+  StreetNode *tmp = streets;
+  while (tmp != NULL) {
+    count++;
+    tmp = tmp->next;
+  }
+  StreetNode *closest = findClosestStreet(streets, lat, lon);
 
-  if (closest == NULL) return;
+  if (closest == NULL)
+    return;
 
   printf("Closest street: %s\n", closest->street.name);
 
   printf("Between %lld (%f, %f) and %lld (%f, %f)\n", closest->street.id1,
          closest->street.lat1, closest->street.lon1, closest->street.id2,
          closest->street.lat2, closest->street.lon2);
-  if (showConnection==1) {
+  if (showConnection == 1) {
     printf("\nFrom this street segment, you can go to:\n");
 
     HashMap *graph = buildGraph(streets);
     if (graph != NULL) {
       int count = printConnectedStreetsFast(graph, closest->street);
-      if (count == 0) printf("    No connections found\n");
+      if (count == 0)
+        printf("    No connections found\n");
       freeHashMap(graph);
     } else {
       // versió original si no hi ha memòria
       printConnectedStreets(streets, closest->street);
-    } 
+    }
   }
 }

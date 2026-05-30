@@ -31,7 +31,8 @@ StreetNode *loadStreets(char *filename);
 void freeStreets(StreetNode *head);
 
 double haversine(double lat1, double lon1, double lat2, double lon2);
-void processLocation(double lat, double lon, StreetNode *streets,int showConnection);
+void processLocation(double lat, double lon, StreetNode *streets,
+                     int showConnection);
 double toRadians(double degrees);
 StreetNode *findClosestStreet(StreetNode *head, double userLat, double userLon);
 void printConnectedStreets(StreetNode *head, Street target);

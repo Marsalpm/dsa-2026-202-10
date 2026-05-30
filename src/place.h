@@ -15,6 +15,7 @@ typedef struct PlaceNode {
 PlaceNode *addPlace(PlaceNode *head, Place p);
 PlaceNode *loadPlaces(char *filename);
 PlaceNode *findPlace(PlaceNode *head, char *name);
-int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, double *lat, double *lon, int showConnection);
+int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets,
+                            double *lat, double *lon, int showConnection);
 void freePlaces(PlaceNode *head);
 #endif

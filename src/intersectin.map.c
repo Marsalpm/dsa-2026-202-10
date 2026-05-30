@@ -5,9 +5,9 @@
 #include <string.h>
 
 // Converteix un intersectionId (molt gran) en un índex petit dins la taula hash
-int hash(long long id) { 
-    long long h = id % TABLE_SIZE;
-    return (int)(h < 0 ? -h : h);
+int hash(long long id) {
+  long long h = id % TABLE_SIZE;
+  return (int)(h < 0 ? -h : h);
 }
 
 // Crea i inicialitza el hashmap
@@ -55,59 +55,59 @@ void insertStreet(HashMap *map, Street s) {
       entry = malloc(sizeof(HashEntry)); // Reservem memòria per la nova entrada
 
       entry->intersectionId = currentId; // Li assignem l'ID
-      entry->streets = NULL;             // Inicialitzem la llista de carrers a buit
+      entry->streets = NULL; // Inicialitzem la llista de carrers a buit
 
       // Inserim la nova entrada al principi de la llista de col·lisions
       entry->next = map->table[index];
       map->table[index] = entry;
     }
 
-// Creem un nou node per afegir el carrer
-StreetList *newStreet = malloc(sizeof(StreetList));
-newStreet->street = s;
-newStreet->next = NULL;
+    // Creem un nou node per afegir el carrer
+    StreetList *newStreet = malloc(sizeof(StreetList));
+    newStreet->street = s;
+    newStreet->next = NULL;
 
-// Si no hi ha cap carrer encara, serà el primer
-if (entry->streets == NULL) {
+    // Si no hi ha cap carrer encara, serà el primer
+    if (entry->streets == NULL) {
 
-    entry->streets = newStreet;
-}
-else {
+      entry->streets = newStreet;
+    } else {
 
-    // Busquem l'últim carrer de la llista
-    StreetList *currentStreet = entry->streets;
+      // Busquem l'últim carrer de la llista
+      StreetList *currentStreet = entry->streets;
 
-    while (currentStreet->next != NULL) {
+      while (currentStreet->next != NULL) {
         currentStreet = currentStreet->next;
-    }
+      }
 
-    // Afegim el nou carrer al final
-    currentStreet->next = newStreet;
-}
+      // Afegim el nou carrer al final
+      currentStreet->next = newStreet;
+    }
   }
 }
 
 // Construeix el graf sencer a partir d'una llista de carrers
 HashMap *buildGraph(StreetNode *streets) {
-    HashMap *map = createHashMap(); // Creem un mapa buit
-    StreetNode *current = streets;  // Punter temporal per recórrer els carrers
-    int count = 0;                  // Comptador (opcional)
-    
-    // Recorrem tota la llista de carrers
-    while (current != NULL) {
-        insertStreet(map, current->street); // Afegim cada carrer al graf
-        count++;                            // Incrementem el comptador
-        current = current->next;            // Passem al següent carrer
-    }
-    return map; // Retornem el graf construït
+  HashMap *map = createHashMap(); // Creem un mapa buit
+  StreetNode *current = streets;  // Punter temporal per recórrer els carrers
+  int count = 0;                  // Comptador (opcional)
+
+  // Recorrem tota la llista de carrers
+  while (current != NULL) {
+    insertStreet(map, current->street); // Afegim cada carrer al graf
+    count++;                            // Incrementem el comptador
+    current = current->next;            // Passem al següent carrer
+  }
+  return map; // Retornem el graf construït
 }
 
 // Cerca una intersecció específica pel seu ID
 HashEntry *findIntersection(HashMap *map, long long id) {
   // Calculem la posició on hauria de ser
   int index = hash(id);
-  HashEntry *entry = map->table[index]; // Agafem el primer element d'aquella posició
-  
+  HashEntry *entry =
+      map->table[index]; // Agafem el primer element d'aquella posició
+
   // Recorrem la linked list de col·lisions
   while (entry != NULL) {
     // Si trobem la intersecció correcta, la retornem

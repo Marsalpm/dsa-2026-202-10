@@ -122,7 +122,7 @@ El principal inconvenient d'utilitzar una taula hash és que augmenta molt la me
 
 ## Describe an improvement to the algorithm to find the street segment given a latitude and longitude to improve its runtime complexity / latency.
 
-**Complexitat actual: ** `findClosestStreet` recorre tota la llista de carrers calculant la distància a cada segment → **O(n)**.
+**Complexitat actual:** `findClosestStreet` recorre tota la llista de carrers calculant la distància a cada segment → **O(n)**.
 
 **Millora:** Usar un **k-d tree**. Organitza els segments per coordenades (lat, lon) en un arbre binari que divideix l'espai alternant per lat i lon. Per buscar el segment més proper, baixa per l'arbre descartant branques que no poden contenir el resultat → **O(log n)** de mitjana.
 

@@ -52,14 +52,16 @@ PlaceNode *findPlace(PlaceNode *head, char *name) {
   return NULL; // Si acabem el bucle sense trobar res, retornem NULL
 }
 
-int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, double *lat, double *lon, int showConnection) {
+int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets,
+                            double *lat, double *lon, int showConnection) {
   PlaceNode *resultat = findPlace(head, name);
   // Cerca exacta
   if (resultat != NULL) {
     printf("\nFound at (%f, %f)\n", resultat->place.lat, resultat->place.lon);
-    processLocation(resultat->place.lat, resultat->place.lon, streets, showConnection);
-    *lat=resultat->place.lat;
-    *lon=resultat->place.lon;
+    processLocation(resultat->place.lat, resultat->place.lon, streets,
+                    showConnection);
+    *lat = resultat->place.lat;
+    *lon = resultat->place.lon;
     return 1;
   }
   // Cerca d'opcions similars
@@ -103,10 +105,12 @@ int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, do
         aux = aux->next;
       PlaceNode *final_res = findPlace(head, aux->name);
       if (final_res != NULL) {
-        printf("\nFound at (%f, %f)\n", final_res->place.lat,final_res->place.lon);
-        *lat=final_res->place.lat;
-        *lon=final_res->place.lon;
-        processLocation(final_res->place.lat, final_res->place.lon, streets, showConnection);
+        printf("\nFound at (%f, %f)\n", final_res->place.lat,
+               final_res->place.lon);
+        *lat = final_res->place.lat;
+        *lon = final_res->place.lon;
+        processLocation(final_res->place.lat, final_res->place.lon, streets,
+                        showConnection);
         return 1;
       }
     }
@@ -120,10 +124,12 @@ int cerca_inteligent_places(PlaceNode *head, char *name, StreetNode *streets, do
       aux = aux->next;
     PlaceNode *final_res = findPlace(head, aux->name);
     if (final_res != NULL) {
-      printf("\nFound at (%f, %f)\n", final_res->place.lat, final_res->place.lon);
-      *lat=final_res->place.lat;
-      *lon=final_res->place.lon;
-      processLocation(final_res->place.lat, final_res->place.lon, streets, showConnection);
+      printf("\nFound at (%f, %f)\n", final_res->place.lat,
+             final_res->place.lon);
+      *lat = final_res->place.lat;
+      *lon = final_res->place.lon;
+      processLocation(final_res->place.lat, final_res->place.lon, streets,
+                      showConnection);
     }
   }
   freeSugestion(sugList);
