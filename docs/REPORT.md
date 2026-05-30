@@ -56,15 +56,29 @@ En la nostre implementació hi ha un sobrecost adicional ja que cada cop que exp
 
 Podem veure que la versió del LAB 4 (Lineal Search) normalment triga més que la del LAB 5 (HashMap) i més quan el fitxer és més gran. Això passa perque la cerca lineal ha de recòrrer tots els carrers fins a trobar quins estan connectats mentre que el hashmappot anar directament a la intersecció que busquem i obtenir els carrers conectats molt més ràpid. Tot això comentat és els partats anteriors posats en pràctica, on LS el pitjor cas és O(n^2) i a HS és O(n).
 
-![Graph](graficReport.png)
+![Graph](graficReport1.png)
 
 
 
 ## A plot comparing the latency to find a path between two points finding connected streets sequentially looking through the list compared to using the intersections map, depending on the map size (but keeping the same origin and destination). Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results.
-| Map  ||  BFS Slow (ms)    | T (ms)||  BFS Fast (ms)    | T(ms) |
+| Map  ||  C Lineal (ms)    | T (ms)||   HashMap (ms)    | T(ms) |
 | xs_1 || 0.047 0.086 0.091 | 0.074 || 0.017 0.037 0.038 | 0.030 |
 | xs_2 || 0.157 0.099 0.092 | 0.116 || 0.051 0.042 0.039 | 0.044 |
 | md_1 || 0.947 0.870 0.927 | 0.914 || 0.237 0.127 0.167 | 0.177 |
 | lg_1 || 2.366 4.089 2.398 | 2.951 || 0.052 0.060 0.051 | 0.054 |
 | xl_1 || 248.317 300.434 251.224 | 266.658 || 4.432 4.527 4.481 | 4.480 |
 | 2xl_1|| 5.681 4.317 4.959 | 4.985 || 0.026 0.026 0.027 | 0.026 |
+
+Un cop més podem veure la diferencia entre les dos eficiènices del HashMap i de la cerca lineal. La versió lenta (CL) té una complexitat aproximada de O(E²), ja que per cada expansió del BFS cal recórrer tota la llista de carrers per trobar les connexions. La versió amb hashmap té una complexitat O(V + E), ja que les connexions d'una intersecció es poden obtenir utilitzant la taula hash.
+
+![Graph](graficReport2.png)
+
+
+## A plot comparing the latency to find a path between two points finding connected streets sequentially looking through the list compared to using the intersections map, depending on the distance between the origin and destination (but using the same map).Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results. Fit a curve and justify it based on the runtime complexity from question 3.
+
+| Distance | C Lineal (ms) | HashMap (ms) |
+|    0     |     0.405     |     0.012    |
+|    +3    |     2.405     |     0.031    |
+|   100    |     5.622     |     0.031    |
+|   1000   |     5.406     |     0.037    |
+| ultim c  |     4.343     |     0.035    |
