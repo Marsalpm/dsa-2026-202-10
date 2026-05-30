@@ -493,8 +493,8 @@ PathNode *bfs_slow(StreetNode *streets, Street fromStreet, Street toStreet) {
     PathNode *current =
         dequeue(q, &exit_intersection); // Treu el seguent cami de la cua i
                                         // recuperem interseccio de on sortim
-    PathNode *temp = current;    // Busquem ultim carrer del cami
-    while (temp->next != NULL) { // Busquem ultim carrer del cami
+    PathNode *temp = current;           // Busquem ultim carrer del cami
+    while (temp->next != NULL) {        // Busquem ultim carrer del cami
       temp = temp->next;
     }
 
