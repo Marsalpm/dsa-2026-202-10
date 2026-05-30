@@ -77,8 +77,35 @@ Un cop més podem veure la diferencia entre les dos eficiènices del HashMap i d
 ## A plot comparing the latency to find a path between two points finding connected streets sequentially looking through the list compared to using the intersections map, depending on the distance between the origin and destination (but using the same map).Experimentally determine the results by measuring multiple times your program's behaviour with different relevant scenarios in the same machine. Include your raw data in the report, besides the plot. Explain the results. Fit a curve and justify it based on the runtime complexity from question 3.
 
 | Distance | C Lineal (ms) | HashMap (ms) |
-|    0     |     0.405     |     0.012    |
-|    +3    |     2.405     |     0.031    |
-|   100    |     5.622     |     0.031    |
-|   1000   |     5.406     |     0.037    |
-| ultim c  |     4.343     |     0.035    |
+|    0     |     0.086     |     0.037    |
+|    +3    |     1.719     |     0.208    |
+|   100    |     8.561     |     0.114    |
+|   1000   |     8.822     |     2.110    |
+| ultim c  |     1.527     |     0.274    |
+
+Un cop més pode, observar la diferència de rendiment entre la cerca lineal i el HashMap. La versió amb cerca lineal te un temps d'execució una mica més elevat, ja que en cada expansió del BFS ha de recórrer tota la llista de carrers per trobar les connexions disponibles. En canvi, amb la versió amb HashMap obtrenim directament els carrers connectats a cada intersecció.
+
+En aquest cas no veiem que ningún dels dos casos poguem reacionar la distància i el temps com amb una proporcionalitat directe. Això passa perque el cost del BFS no depèn unicament de la distància física entre l¡origen i el final, sinó que també en el nombre de nodes i carrers que an de ser explorats abans d'arribar al final. Tot i així, és manté la tendència que hem pogut veure en els apartats anteriors en que la cerca lineal tendeix a ser més lenta que no el HashMap.
+
+![Graph](graficReport3.png)
+
+
+## Describe an improvement to the visited data structure in the BFS algorithm to improve latency. Justify which data structure you would use / have used instead of a list to improve performance. Describe its current runtime complexity and the improved runtime complexity. Describe any trade-offs or downsides of your approach regarding latency or memory usage.
+Inicialment els segments que visitavem els anavem guardant en una llista enllaçada. Un cop les haviem guardat, per poder comprovar si aquell segment ja l'haviem visitat haviem de recórrer seqüencialment tota la llista finst trobar-lo o arribar fina el final.
+
+Per millorar la latència vam substituir això oer una taula hash (VisitedSet). Fent una funció hash, cada segment es guarda en una posició concreta de la taula, fent aixì que poguem accedir-hi molt més ràpid.
+
+Això és perquè una taula hash és una estructura adequada perquè l'operació que més utilitzem durant el BFS és comprovar si un segment ja ha estat visitat. Com ho utilitzem tantes vegades fem que es redueixi el cost i això afecta directament en el temps total d'execució.
+
+   OPERACIÓ    | LLISTA | HASHMAP|
+Buscar visitat |  O(n)  |  O(1)  |
+Afegir visitat |  O(1)  |  O(1)  |
+  BFS complet  |  O(1)  |  O(1)  |
+
+Amb la llista enllaçada, la comprovació d'un segment visitat tenia una complexitat O(n), ja que podiem arribar a recórrer tots els elements de la llista. Amb la taula hash, aquesta operació passa a tenir una complexitat O(1) de mitjana, ja que l'accés es fa directament a través de l'índex calculat per la funció de hash.
+
+El principal inconvenient d'utilitzar una taula hash és que augmenta molt la memòria que necessitem, ja que cal reservar espai per als buckets de la taula encara que alguns no s'utilitzin. A més, en el pitjor cas poden produir-se col·lisions, fent que diverses entrades comparteixin el mateix bucket. En aquesta situació, la complexitat podria degradar-se fins a O(n) però segueix sent la mateixa que la de la llista.
+
+
+
+## Describe an improvement to the algorithm to find the street segment given a latitude and longitude to improve its runtime complexity / latency. Justify which data structure or algorithm you would use / have used to improve latency. Describe its current runtime complexity and the improved runtime complexity. Describe any trade-offs or downsides of your approach regarding latency or memory usage.
