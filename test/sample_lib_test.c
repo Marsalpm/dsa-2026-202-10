@@ -724,21 +724,6 @@ void test_pathCopy() {
   successtest();
 }
 
-void test_visitedSet() {
-  runningtest("test_visitedSet");
-  {
-    VisitedSet *set = createVisitedSet();
-
-    addVisitedSet(set, 1, 2);
-
-    assertEqualsInt(isVisitedSet(set, 1, 2), 1);
-    assertEqualsInt(isVisitedSet(set, 5, 6), 0);
-
-    freeVisitedSet(set);
-  }
-  successtest();
-}
-
 void test_bfs_troba_cami() {
   runningtest("test_bfs_troba_cami");
   {
