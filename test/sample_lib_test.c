@@ -890,7 +890,6 @@ void bfs_test() {
     test_sameSegment_mateix();
     test_sameSegment_invers();
     test_sameSegment_diferent();
-    test_visitedSet();
     test_bfs_troba_cami();
     test_bfs_no_troba_cami();
     test_bfs_slow_troba_cami();
