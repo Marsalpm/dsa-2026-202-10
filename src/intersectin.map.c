@@ -90,12 +90,10 @@ void insertStreet(HashMap *map, Street s) {
 HashMap *buildGraph(StreetNode *streets) {
   HashMap *map = createHashMap(); // Creem un mapa buit
   StreetNode *current = streets;  // Punter temporal per recórrer els carrers
-  int count = 0;                  // Comptador (opcional)
 
   // Recorrem tota la llista de carrers
   while (current != NULL) {
     insertStreet(map, current->street); // Afegim cada carrer al graf
-    count++;                            // Incrementem el comptador
     current = current->next;            // Passem al següent carrer
   }
   return map; // Retornem el graf construït

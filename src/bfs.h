@@ -52,8 +52,6 @@ PathNode *pathCopy(PathNode *p);
 PathNode *pathAppend(PathNode *p, Street street);
 PathNode *bfs(HashMap *graph, Street fromStreet, Street toStreet);
 VisitedSet *createVisitedSet();
-int isVisitedSet(VisitedSet *set, long long id1, long long id2);
-void addVisitedSet(VisitedSet *set, long long id1, long long id2);
 void freeVisitedSet(VisitedSet *set);
 void printRoute(PathNode *path);
 void latlon_to_xy(double lat_ref, double lon_ref, double lat, double lon,

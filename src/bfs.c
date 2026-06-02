@@ -299,46 +299,6 @@ VisitedSet *createVisitedSet() {
   return set;
 }
 
-// Comprova si un segment (id1, id2) ja està dins el hash set
-int isVisitedSet(VisitedSet *set, long long id1, long long id2) {
-
-  long long a = id1;
-  long long b = id2;
-
-  normalize(&a, &b);
-
-  unsigned int index = visitedHash(a, b);
-
-  VisitedEntry *entry = set->table[index];
-
-  while (entry != NULL) {
-
-    if (entry->id1 == a && entry->id2 == b)
-      return 1;
-
-    entry = entry->next;
-  }
-
-  return 0;
-}
-
-// Afegeix un segment (id1, id2) al hash set
-void addVisitedSet(VisitedSet *set, long long id1, long long id2) {
-
-  long long a = id1;
-  long long b = id2;
-
-  normalize(&a, &b);
-
-  unsigned int index = visitedHash(a, b);
-
-  VisitedEntry *newEntry = malloc(sizeof(VisitedEntry));
-  newEntry->id1 = a;
-  newEntry->id2 = b;
-
-  newEntry->next = set->table[index];
-  set->table[index] = newEntry;
-}
 
 // Allibera tota la memòria del hash set
 void freeVisitedSet(VisitedSet *set) {
