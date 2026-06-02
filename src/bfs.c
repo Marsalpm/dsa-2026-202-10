@@ -299,7 +299,6 @@ VisitedSet *createVisitedSet() {
   return set;
 }
 
-
 // Allibera tota la memòria del hash set
 void freeVisitedSet(VisitedSet *set) {
   for (int i = 0; i < VISITED_TABLE_SIZE; i++) {
